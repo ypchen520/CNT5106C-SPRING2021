@@ -1,3 +1,4 @@
+package src;
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -30,13 +31,17 @@ public class StartRemotePeers {
 			while((st = in.readLine()) != null) {
 				
 				 String[] tokens = st.split("\\s+");
+				 int peerID = Integer.parseInt(tokens[0]);
+				 String hostname = tokens[1];
+				 int port = Integer.parseInt(tokens[2]);
+				 int hasFile = Integer.parseInt(tokens[3]);
 		    	 //System.out.println("tokens begin ----");
 			     //for (int x=0; x<tokens.length; x++) {
 			     //    System.out.println(tokens[x]);
 			     //}
 		         //System.out.println("tokens end ----");
 			    
-			     peerInfoVector.addElement(new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+			     peerInfoVector.addElement(new RemotePeerInfo(peerID, hostname, port, hasFile));
 			
 			}
 			
@@ -63,11 +68,11 @@ public class StartRemotePeers {
 			for (int i = 0; i < myStart.peerInfoVector.size(); i++) {
 				RemotePeerInfo pInfo = (RemotePeerInfo) myStart.peerInfoVector.elementAt(i);
 				
-				System.out.println("Start remote peer " + pInfo.peerId +  " at " + pInfo.peerAddress );
+				System.out.println("Start remote peer " + pInfo.getPeerID() +  " at " + pInfo.getHostName() );
 				
 				// *********************** IMPORTANT *************************** //
 				// If your program is JAVA, use this line.
-				Runtime.getRuntime().exec("ssh " + pInfo.peerAddress + " cd " + path + "; java peerProcess " + pInfo.peerId);
+				Runtime.getRuntime().exec("ssh " + pInfo.getHostName() + " cd " + path + "; java peerProcess " + pInfo.getPeerID());
 				
 				// If your program is C/C++, use this line instead of the above line. 
 				//Runtime.getRuntime().exec("ssh " + pInfo.peerAddress + " cd " + path + "; ./peerProcess " + pInfo.peerId);

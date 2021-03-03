@@ -1,3 +1,4 @@
+package src;
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -8,13 +9,52 @@
  */
 
 public class RemotePeerInfo {
-    public String peerId;
-    public String peerAddress;
-    public String peerPort;
-    
-    public RemotePeerInfo(String pId, String pAddress, String pPort) {
-        peerId = pId;
-        peerAddress = pAddress;
-        peerPort = pPort;
+    private int peerID;
+    // IP address of the peer
+    private String hostName;
+    private int listeningPort;
+    private int hasFileOrNot;
+
+    public RemotePeerInfo() {
+
+    }
+
+    public RemotePeerInfo(int peerID, String hostName, int port, int hasFileOrNot) {
+        this.peerID = peerID;
+        this.hostName = hostName;
+        this.listeningPort = port;
+        this.hasFileOrNot = hasFileOrNot;
+    }
+
+    public int getPeerID() {
+        return peerID;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public int getListeningPort() {
+        return listeningPort;
+    }
+
+    public int getHasFileOrNot() {
+        return hasFileOrNot;
+    }
+
+    public void setPeerID(int peerID) {
+        this.peerID = peerID;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public void setListeningPort(int listeningPort) {
+        this.listeningPort = listeningPort;
+    }
+
+    public void setHasFileOrNot(int hasFileOrNot) {
+        this.hasFileOrNot = hasFileOrNot;
     }
 }
