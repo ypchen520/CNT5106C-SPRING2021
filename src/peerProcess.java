@@ -1,9 +1,10 @@
-package src;
+// package src;
 
 import java.util.Scanner;
 import java.io.*;
 import java.util.*;
-import src.RemotePeerInfo;
+// import src.RemotePeerInfo;
+import java.net.Socket;
 
 // TODO: Add logging
 public class peerProcess{
