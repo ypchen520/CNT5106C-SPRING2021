@@ -2,8 +2,8 @@ JC = javac
 .SUFFIXES: .java .class
 default: classes
 
-classes: 
-        $(JC) *.java
+classes:
+	$(JC) *.java
 
 clean:
-        $(RM) *.class
+	$(RM) *.class

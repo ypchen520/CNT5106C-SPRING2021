@@ -9,6 +9,11 @@ public class HandshakeMessage {
         this.peerID = peerId;
     }
 
+    public byte[] createHandshake(){
+        String handShakeMsg = HANDSHAKE_HEADER + ZERO_BITS + peerID;
+        return handShakeMsg.getBytes();
+    }
+
     public int getPeerId(){
         return this.peerID;
     }
