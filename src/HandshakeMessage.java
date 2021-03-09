@@ -1,4 +1,4 @@
-package src;
+// package src;
 
 public class HandshakeMessage {
     private final String HANDSHAKE_HEADER = "P2PFILESHARINGPROJ";
