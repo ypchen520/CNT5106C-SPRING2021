@@ -18,7 +18,6 @@ public class Peers {
             }catch(Exception e){
                 System.out.println(e);
             }
-            // updateUnchokedPeers();
         }
         
     }
@@ -31,7 +30,6 @@ public class Peers {
             }catch(Exception e){
                 System.out.println(e);
             }
-            // updateUnchokedPeers();
         }
         
     }
