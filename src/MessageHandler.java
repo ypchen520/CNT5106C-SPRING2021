@@ -8,6 +8,17 @@ public class MessageHandler {
     //TODO test this module
     //judge if the message is handshake message
 
+    // Define message types
+    public static final byte TYPE_CHOKE = 0;
+    public static final byte TYPE_UNCHOKE = 1;
+    public static final byte TYPE_INTERESTED = 2;
+    public static final byte TYPE_NOT_INTERESTED = 3;
+    public static final byte TYPE_HAVE = 4;
+    public static final byte TYPE_BITFIELD = 5;
+    public static final byte TYPE_REQUEST = 6;
+    public static final byte TYPE_PIECE = 7;
+
+
     public void onReceivePayload(ActualMessage actualMessage) {
         switch(actualMessage.getMessageType()) {
 
@@ -76,7 +87,7 @@ public class MessageHandler {
         return;
     }
 
-    public void BITFIELDReceived()
+    public void BITFIELDReceived(byte[] payload)
     {
         //TODO:need to be implement
         return;
@@ -94,19 +105,19 @@ public class MessageHandler {
         return;
     }
 
-    public void HAVEReceived()
+    public void HAVEReceived(byte[] payload)
     {
         //TODO:need to be implement
         return;
     }
 
-    public void REQUESTReceived()
+    public void REQUESTReceived(byte[] payload)
     {
         //TODO:need to be implement
         return;
     }
 
-    public void PIECEReceived()
+    public void PIECEReceived(byte[] payload)
     {
         //TODO:need to be implement
         return;
