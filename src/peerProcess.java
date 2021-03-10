@@ -90,7 +90,11 @@ public class peerProcess{
         */
 
         // Initiate connection to each peer that is before it in peerInfoVector
-
+        int tempPeer = selfPos - 1;
+        while (tempPeer > 0) {
+          // TODO: Connect to peer at position tempPeer
+          
+        }
       }
       else {
         System.out.println("There must be exactly one argument");
