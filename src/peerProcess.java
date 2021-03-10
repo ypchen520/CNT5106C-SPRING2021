@@ -69,6 +69,25 @@ public class peerProcess{
         }
 
         // Start listening to port
+        /*
+        Futing:
+            read the bytes bytep[] bytes
+            judge if the bytes is handshake message,if true:
+
+                bytes[] peerId = Arrays.copyOfRange(bytes,28,32);
+                int peerID = MessageHandle.getPeerId(peerID);
+                HandshakeMessage handshakemessage = new HandshakeMessage(peerID);
+
+            if false:(actual message)
+
+                bytes[] Length = Arrays.copyOfRange(bytes,0,4);
+                int messageLength = MessageHandle.getMessageLength(Length);
+                …and also type and payload……
+                ActualMessage actualmessage = new Actualmessage(messageLength,messageType,messagePayload);
+
+                MessageHandler.onReceivePayload(actualMessage)
+
+        */
 
         // Initiate connection to each peer that is before it in peerInfoVector
 
