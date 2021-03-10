@@ -46,7 +46,16 @@ public class Peers {
         timer.scheduleAtFixedRate(new OptUnchokedPeers(), 0, optUnchockingInterval);
     }
 
+    public static void receiveInterestedMsg(){
+        //TODO
+    }
+
+    public static void receiveNotInterestedMsg(){
+        //TODO
+    }
+
     private static void sendUnchokeMsg(){
         //TODO
     }
+
 }
