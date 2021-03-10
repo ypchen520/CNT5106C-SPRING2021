@@ -6,4 +6,4 @@ classes:
 	$(JC) *.java
 
 clean:
-	$(RM) *.class
+	$(RM) *.class *.log
