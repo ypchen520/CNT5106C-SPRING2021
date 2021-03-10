@@ -67,48 +67,48 @@ public class MessageHandler {
     public void CHOKEReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void UNCHOKEReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void BITFIELDReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void INTERESTEDReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void NOTINTERESTEDReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void HAVEReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void REQUESTReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 
     public void PIECEReceived()
     {
         //TODO:need to be implement
-
+        return;
     }
 }
