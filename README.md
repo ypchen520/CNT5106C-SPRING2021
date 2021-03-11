@@ -1,4 +1,5 @@
 # CNT5106C-SPRING2021
+Group members: Yu-Peng Chen, Donald Honeycutt, Futing Shan
 
 A P2P file sharing system.
 
