@@ -11,6 +11,7 @@ public class peerProcess{
     // getConfiguration method reads in the PeerInfo cfg file.
     // Original code from the StartRemotePeers.java file provided on the course website
     static Vector<RemotePeerInfo> peerInfoVector = new Vector<RemotePeerInfo>();
+    
     public static void getConfiguration()
     {
       String st;
@@ -50,18 +51,21 @@ public class peerProcess{
       if (args.length == 1) {
         peerID = Integer.parseInt(args[0]);
 
-        // Read in PeerInfo.cfg using a modified (overloaded to return the vector) function provided on the course website
+        // Read in PeerInfo.cfg using a modified function provided on the course website
         getConfiguration();
+
         // Find position of the peerID from the command line arguments in peerInfoVector
         // TODO: Check for duplicat IDs in the config file?
         int selfPos = -1;
         int pos = 0;
+
         while (pos < peerInfoVector.size() && selfPos == -1) {
           if (peerID == peerInfoVector.get(pos).getPeerID()) {
               selfPos = pos;
           }
           pos++;
         }
+
         //If not in CFG output an error
         if (selfPos == -1) {
           System.out.print("Error: ID not in configuration file");
@@ -93,7 +97,7 @@ public class peerProcess{
         int tempPeer = selfPos - 1;
         while (tempPeer > 0) {
           // TODO: Connect to peer at position tempPeer
-          
+
         }
       }
       else {

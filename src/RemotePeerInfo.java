@@ -20,6 +20,7 @@ public class RemotePeerInfo {
 
     }
 
+    // Constructor
     public RemotePeerInfo(int peerID, String hostName, int port, int hasFileOrNot) {
         this.peerID = peerID;
         this.hostName = hostName;
