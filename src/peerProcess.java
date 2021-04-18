@@ -15,6 +15,7 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
+    static Vector<Client> clients = new Vector<Client>();
 
     // public static void addPeerConnection(int selfPos) {
     //   try {
@@ -150,10 +151,20 @@ public class peerProcess{
           String newServerName = peerInfoVector.elementAt(selfPos - 1).getHostName();
           int newServerID = peerInfoVector.elementAt(selfPos - 1).getPeerID();
           Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
-          newClient.connect();
+          // newClient.connect();
 
         }
 
+        // Create vector of clients for each peer in the configuration file
+        for (int i = 0; i < peerInfoVector.size(); i++) {
+          int newPeerID = peerInfoVector.elementAt(selfPos).getPeerID();
+          int newServerPort = peerInfoVector.elementAt(i).getListeningPort();
+          String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
+          String newServerName = peerInfoVector.elementAt(i).getHostName();
+          int newServerID = peerInfoVector.elementAt(i).getPeerID();
+          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
+          clients.add(newClient);
+        }
 
         // Connect to previous peers
         // Will need to be setup as a loop, currently goes to previous
@@ -165,6 +176,23 @@ public class peerProcess{
         Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers);
 
         listenServer.startListening();
+        boolean finishedListening = true;
+        boolean initialConnect = false;
+        while(finishedListening) {
+          // If this is the first iteration of the loop, connect to all previous peers
+          if (!initialConnect) {
+            for (int i = 0; i < selfPos; i++) {
+                clients.get(i).connect();
+            }
+            initialConnect = true;
+          }
+          // Send next data from clients
+
+
+          // Receive next data from peers
+          listenServer.keepListening();
+        }
+
 
 
 

@@ -96,7 +96,7 @@ public class Client {
 
       System.out.println("FROM SERVER: " + returnedMessage);
 
-      clientSocket.close();
+
     }
     catch (Exception e) {
       System.out.print("Error connecting on server");
@@ -104,5 +104,16 @@ public class Client {
       System.out.println(e);
     }
 
+  }
+
+  void closeSocket() {
+    try {
+      clientSocket.close();
+    }
+    catch (Exception e) {
+      System.out.print("Error closing connection");
+      e.printStackTrace();
+      System.out.println(e);
+    }
   }
 }
