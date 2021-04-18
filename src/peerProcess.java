@@ -190,7 +190,8 @@ public class peerProcess{
 
 
           // Receive next data from peers
-          listenServer.keepListening();
+          String inMessage = listenServer.keepListening();
+          System.out.println("Received: " + inMessage);
         }
 
 

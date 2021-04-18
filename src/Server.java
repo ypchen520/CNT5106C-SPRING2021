@@ -63,11 +63,10 @@ public class Server {
   }
 
   // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for
-  public void keepListening() {
+  public String keepListening() {
+    String inText = "N/A";
+    String outText;
     try {
-      String inText;
-      String outText;
-
       Socket connectionSocket = listener.accept();
 
       BufferedReader clientIn = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
@@ -79,12 +78,14 @@ public class Server {
       outText = "Peer " + inText + " has successfully reached server " + peerID + "\n";
 
       clientOut.writeBytes(outText);
+
     }
     catch (Exception e) {
       System.out.print("Error listening on port");
       e.printStackTrace();
       System.out.println(e);
     }
+    return inText;
   }
 
 }
