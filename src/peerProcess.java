@@ -183,12 +183,26 @@ public class peerProcess{
         boolean initialConnect = true;
         while(!finishedListening) {
           // If this is the first iteration of the loop, connect to all previous peers
+          // Testing loop delete later
+          for (int i = 0; i < thisLog.getLog().size(); i++) {
+            System.out.println(thisLog.getLog().get(i));
+          }
+
           if (initialConnect) {
             for (int i = 0; i < selfPos; i++) {
+              try {
                 clients.get(i).connect();
                 connectedClients[i] = true;
+                thisLog.logTcpConnection(clients.get(i).getServerID(), "to");
+              }
+              catch (Exception e) {
+                System.out.print("Error sending handshake to peer " + clients.get(i).getServerID());
+                e.printStackTrace();
+                System.out.println(e);
+              }
+
             }
-            initialConnect = true;
+            initialConnect = false;
           }
           // Send next data from clients\
           // Use the transmit function here
@@ -197,7 +211,6 @@ public class peerProcess{
 
           // Receive next data from peers
           String inMessage = listenServer.keepListening();
-          System.out.println("In Text: " + inMessage);
           // If message is a handshake, return a handshake and add the peer to the connected clients list
           if (inMessage.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
             // Get ID of peer that sent the handshake
@@ -214,10 +227,27 @@ public class peerProcess{
               // TODO: error message or exception or something, not super important but should probably do it if we have time
             }
             else {
+              try {
+                thisLog.logTcpConnection(clients.get(location).getServerID(), "from");
+              }
+              catch (Exception e) {
+                System.out.print("Error receiving handshake from peer " + clients.get(location).getServerID());
+                e.printStackTrace();
+                System.out.println(e);
+              }
+
               // Check if handshake message has already been sent to and received by the peer that initiated this handShakeMsg
               // If handshake has not been made the other way, send a message back to complete the handshake
               if (connectedClients[location] != true) {
-                clients.get(location).connect();
+                try {
+                  clients.get(location).connect();
+                  thisLog.logTcpConnection(clients.get(location).getServerID(), "to");
+                }
+                catch (Exception e) {
+                  System.out.print("Error sending handshake to peer " + clients.get(location).getServerID());
+                  e.printStackTrace();
+                  System.out.println(e);
+                }
               }
 
               // Mark the peer as connected
@@ -227,99 +257,6 @@ public class peerProcess{
 
           System.out.println(inMessage.getBytes().length);
         }
-
-
-
-
-        // try {
-        //   String inText;
-        //   String outText;
-        //
-        //   ServerSocket welcomeSocket = new ServerSocket(peerInfoVector.elementAt(selfPos).getListeningPort());
-        //
-        //   while (true) {
-        //     Socket connectionSocket = welcomeSocket.accept();
-        //
-        //     BufferedReader clientIn = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-        //
-        //     DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
-        //
-        //     inText = clientIn.readLine();
-        //
-        //     outText = inText.toUpperCase() + "\n";
-        //
-        //     clientOut.writeBytes(outText);
-        //   }
-        // }
-        // catch (Exception e) {
-        //   System.out.print("Error listening on port");
-        //   e.printStackTrace();
-        //   System.out.println(e);
-        // }
-
-        // Run server file
-        // try {
-        //   Runtime.getRuntime().exec("java peerServer.java");
-        // }
-        // catch (Exception e) {
-        //   System.out.print("Error running server file");
-        // }
-        // // Run client file multiple times
-        // try {
-        //   Runtime.getRuntime().exec("java peerClient.java");
-        // }
-        // catch (Exception e) {
-        //   System.out.print("Error running client file");
-        // }
-
-
-
-
-
-
-
-
-        // BELOW IS FAILED CODE: delete if next attempt works, leaving it for potential reference later
-        // try (
-        //   // Initiate listening on port
-        //   ServerSocket peerServer = new ServerSocket(1337);
-        //   // Wait for client to connect
-        //   Socket peerClient = peerServer.accept();
-        //   //
-        //   PrintWriter outStream = new PrintWriter(peerClient.getOutputStream(), true);
-        //   BufferedReader inStream = new BufferedReader (new InputStreamReader(peerClient.getInputStream()));
-        // ) {
-        //   // Initiate conversation with client
-        //   System.out.println("here");
-        //   // while (true) {
-        //   //   String inText = "";
-        //   //   try {
-        //   //     inText = inStream.readLine();
-        //   //     System.out.println(inText);
-        //   //   }
-        //   //   catch (IOException e) {
-        //   //     System.out.println("inStream read error");
-        //   //   }
-        //   // }
-        //   // outputLine = kkp.processInput(null);
-        //   // out.println(outputLine);
-        //   //
-        //   // while ((inputLine = in.readLine()) != null) {
-        //   //     outputLine = kkp.processInput(inputLine);
-        //   //     out.println(outputLine);
-        //   //     if (outputLine.equals("Bye."))
-        //   //         break;
-        //   // }
-        // }
-        // catch (Exception e) {
-        //   System.out.println("Error listening on or connecting to socket");
-        // }
-        // // Initiate connection to each peer that is before it in peerInfoVector
-        // int tempPeer = selfPos - 1;
-        // while (tempPeer > 0) {
-        //   // TODO: Connect to peer at position tempPeer
-        //
-        // }
       }
       else {
         System.out.println("There must be exactly one argument");

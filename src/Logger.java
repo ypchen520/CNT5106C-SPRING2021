@@ -11,8 +11,8 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 
 public class Logger {
-    private int peerID;
-    private List<String> log = new ArrayList<>();
+    private static int peerID;
+    private static List<String> log = new ArrayList<>();
     private String filePrefix = "log_peer_";
     private String fileExtenstion = ".log";
 
@@ -20,12 +20,16 @@ public class Logger {
         this.peerID = peerID;
     }
 
-    private String formatDate(Date date){
+    public List<String> getLog() {
+      return log;
+    }
+
+    private static String formatDate(Date date){
         SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a zzz");
         return dateFormat.format(date) + ": ";
     }
 
-    private void writeToLog(String content) throws IOException{
+    private static void writeToLog(String content) throws IOException{
         log.add(content);
     }
 
@@ -53,7 +57,7 @@ public class Logger {
                 System.out.println("[logTcpConnection] Unknown message type");
         }
     }
-    
+
     public void logPreferredNeighborsChange(List<RemotePeerInfo> preferredNeighbors) throws IOException{
         String preferredNeighborIDs = "";
         int n = preferredNeighbors.size();

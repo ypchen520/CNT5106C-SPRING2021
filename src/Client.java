@@ -75,7 +75,6 @@ public class Client {
       String returnedMessage;
 
       if (serverName.equals("localhost")) {
-        System.out.println("Converting to localhost address");
         System.out.println("Connecting to localhost with port " + serverPort);
         clientSocket = new Socket(InetAddress.getByName(null), serverPort);
       }
@@ -97,8 +96,6 @@ public class Client {
       System.out.println("Client " + peerID + " attempting to connect to " + serverID + " with message " + message);
 
       returnedMessage = inStream.readLine();
-
-      System.out.println("FROM SERVER: " + returnedMessage);
 
 
     }
