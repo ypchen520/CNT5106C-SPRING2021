@@ -49,50 +49,43 @@ public class Server {
     try {
       // TODO: Data logging
 
-      String inText;
-      String outText;
+      listener = new ServerSocket(listeningPort);
 
-      ServerSocket welcomeSocket = new ServerSocket(listeningPort);
+      // Maybe handle handshake stuff here?
 
-      while (true) {
-        Socket connectionSocket = welcomeSocket.accept();
-
-        BufferedReader clientIn = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-
-        DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
-
-        inText = clientIn.readLine();
-
-        outText = "Peer " + inText + " has successfully reached server " + peerID + "\n";
-
-        clientOut.writeBytes(outText);
-      }
-      // Call constructor
-      // listener = new ServerSocket(listeningPort);
-
-      // Start listening for multiple clients via infinite loop
-      // while (true) {
-      //   try {
-      //     // Receive incoming client request
-      //     Socket socket = listener.accept();
-      //
-      //     // Obtain the I/O streams
-      //
-      //     // Close the socket once finished
-      //     socket.close();
-      //   }
-      //   catch (Exception e) {
-      //     // TODO: exception handling
-      //
-      //   }
-      // }
     }
     catch (Exception e) {
       //TODO: exception handling
+      System.out.print("Error starting listening on port");
+      e.printStackTrace();
+      System.out.println(e);
+    }
+  }
+
+  // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for
+  public String keepListening() {
+    String inText = "N/A";
+    String outText;
+    try {
+      Socket connectionSocket = listener.accept();
+
+      BufferedReader clientIn = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+
+      DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
+
+      inText = clientIn.readLine();
+
+      outText = "Peer " + inText + " has successfully reached server " + peerID + "\n";
+
+      clientOut.writeBytes(outText);
+
+    }
+    catch (Exception e) {
       System.out.print("Error listening on port");
       e.printStackTrace();
       System.out.println(e);
     }
+    return inText;
   }
 
 }
