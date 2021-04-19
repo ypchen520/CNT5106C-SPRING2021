@@ -68,10 +68,10 @@ public class peerProcess{
       int i1;
       try {
         // Read in configuration file
-        // BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
+        BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 
         // Alternative configuration file for local testing, leave one of them commented out
-        BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
+        // BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
 
         while((st = in.readLine()) != null) {
 
