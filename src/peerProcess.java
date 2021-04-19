@@ -1,6 +1,11 @@
 // package src;
 
 import java.util.Scanner;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
+import sun.misc.OSEnvironment;
+
 import java.io.*;
 import java.util.*;
 // import src.RemotePeerInfo;
@@ -22,6 +27,8 @@ public class peerProcess{
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
 
     static Vector<Client> clients = new Vector<Client>();
+    public static int maxPieces;
+    public static Object lock = new Object();
 
     // public static void addPeerConnection(int selfPos) {
     //   try {
@@ -301,5 +308,14 @@ public class peerProcess{
 
     public static  ArrayList<RemotePeerInfo> getInterestedPeers(){
         return interestedPeers;
+    }
+    
+    public static void checkFinish() {
+    	for(RemotePeerInfo remotePeerInfo:peerProcess.peerInfoVector){
+    		if(remotePeerInfo.pieceIndex.size()<peerProcess.maxPieces) {
+    			return;
+    		}
+    	}
+    	System.exit(0);
     }
 }

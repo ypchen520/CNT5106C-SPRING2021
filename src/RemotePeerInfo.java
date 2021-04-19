@@ -1,3 +1,7 @@
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 // package src;
 /*
  *                     CEN5501C Project2
@@ -15,10 +19,11 @@ public class RemotePeerInfo {
     private String hostName;
     private int listeningPort;
     private int hasFileOrNot;
-    public boolean hasCompleteFile;
+    public boolean completeFile;
     public int downloadingRatePiece;
     public boolean choke;
     public int index;
+    public Set<Integer> pieceIndex;
 
     public RemotePeerInfo() {
 
@@ -30,6 +35,7 @@ public class RemotePeerInfo {
         this.hostName = hostName;
         this.listeningPort = port;
         this.hasFileOrNot = hasFileOrNot;
+        pieceIndex = new HashSet<>();
     }
 
     public int getPeerID() {
