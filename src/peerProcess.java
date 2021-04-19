@@ -15,6 +15,9 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
+
+    public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
+
     static Vector<Client> clients = new Vector<Client>();
 
     // public static void addPeerConnection(int selfPos) {
@@ -283,4 +286,7 @@ public class peerProcess{
 
     }
 
+    public static  ArrayList<RemotePeerInfo> getInterestedPeers(){
+        return interestedPeers;
+    }
 }

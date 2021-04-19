@@ -99,4 +99,10 @@ public class Logger {
     public void logCompleteDownloading() throws IOException{
         writeToLog(formatDate(new Date()) + "Peer " + peerID + " has downloaded the complete file.");
     }
+
+    public void logOptimisticallyUnchokedNeighborChange(int peerID2) throws IOException{
+        writeToLog(formatDate(new Date()) + "Peer " + peerID + " has the optimistically unchoked neighbor "+peerID2+".");
+    }
+
+
 }

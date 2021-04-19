@@ -15,6 +15,10 @@ public class RemotePeerInfo {
     private String hostName;
     private int listeningPort;
     private int hasFileOrNot;
+    public boolean hasCompleteFile;
+    public int downlowdingRatePiece;
+    public boolean choke;
+    public int index;
 
     public RemotePeerInfo() {
 
@@ -58,5 +62,9 @@ public class RemotePeerInfo {
 
     public void setHasFileOrNot(int hasFileOrNot) {
         this.hasFileOrNot = hasFileOrNot;
+    }
+
+    public void resetDownlowdingRatePiece(){
+        this.downlowdingRatePiece=0;
     }
 }
