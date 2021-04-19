@@ -9,7 +9,7 @@ import java.net.*;
 
 // TODO: Add logging
 public class peerProcess{
-	
+
 	public static int indexID;
     // getConfiguration method reads in the PeerInfo cfg file.
     // Original code from the StartRemotePeers.java file provided on the course website
@@ -17,7 +17,7 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
-    
+
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
 
@@ -191,7 +191,28 @@ public class peerProcess{
 
           // Receive next data from peers
           String inMessage = listenServer.keepListening();
-          System.out.println("Received: " + inMessage);
+          System.out.println("In Text: " + inMessage);
+          // If message is a handshake, return a handshake and add the peer to the connected clients list
+          if (inMessage.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
+            // Get ID of peer that sent the handshake
+            int handshakePeerID = Integer.parseInt(inMessage.substring(inMessage.length() - 4));
+            // Find position of peer in vectors
+            int location = -1;
+            for (int i = 0; i < clients.size(); i++) {
+              if (clients.get(i).getPeerID() == handshakePeerID) {
+                System.out.println("I: " + i);
+              }
+            }
+            // Check that peerID is valid from the configuration file
+            if (location == -1) {
+              // TODO: error message or exception or something, not super important but should probably do it if we have time
+            }
+            else {
+
+            }
+          }
+
+          System.out.println(inMessage.getBytes().length);
         }
 
 

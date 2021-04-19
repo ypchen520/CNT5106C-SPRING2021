@@ -67,7 +67,7 @@ public class Client {
     serverPort = port;
   }
 
-  // Connect to TCP server
+  // Connect for handshake
   void connect() {
     // If statement for testing (converts localhost to something that works as localhost)
     try {
@@ -110,6 +110,7 @@ public class Client {
 
   }
 
+  // Connect for transmitting data
   void transmit() {
     // If statement for testing (converts localhost to something that works as localhost)
     try {
