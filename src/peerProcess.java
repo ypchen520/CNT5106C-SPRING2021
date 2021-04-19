@@ -146,7 +146,10 @@ public class peerProcess{
         for (int i = 0; i < peerInfoVector.size(); i++) {
           int newPeerID = peerInfoVector.elementAt(selfPos).getPeerID();
           int newServerPort = peerInfoVector.elementAt(i).getListeningPort();
-          String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
+          // String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
+          HandshakeMessage newHandshake = new HandshakeMessage(peerID);
+          byte[] newMessage = newHandshake.createHandshake();
+
           String newServerName = peerInfoVector.elementAt(i).getHostName();
           int newServerID = peerInfoVector.elementAt(i).getPeerID();
           Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
@@ -168,10 +171,10 @@ public class peerProcess{
 
         listenServer.startListening();
         boolean finishedListening = false;
-        boolean initialConnect = false;
+        boolean initialConnect = true;
         while(!finishedListening) {
           // If this is the first iteration of the loop, connect to all previous peers
-          if (!initialConnect) {
+          if (initialConnect) {
             for (int i = 0; i < selfPos; i++) {
                 clients.get(i).connect();
                 connectedClients[i] = true;
@@ -179,6 +182,7 @@ public class peerProcess{
             initialConnect = true;
           }
           // Send next data from clients\
+          // Use the transmit function here
 
 
 
