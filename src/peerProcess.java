@@ -2,9 +2,9 @@
 
 import java.util.Scanner;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
-import sun.misc.OSEnvironment;
+// import com.sun.org.apache.bcel.internal.generic.NEW;
+//
+// import sun.misc.OSEnvironment;
 
 import java.io.*;
 import java.util.*;
@@ -101,6 +101,7 @@ public class peerProcess{
     public static void main (String[] args){
 
       int peerID;
+      Logger thisLog;
       // Check command line arguments
       // Should be one and only one argument containing the peerID
       if (args.length == 1) {
@@ -108,6 +109,7 @@ public class peerProcess{
 
         // Read in PeerInfo.cfg using a modified function provided on the course website
         getConfiguration();
+        thisLog = new Logger(peerID);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
         // TODO: Check for duplicat IDs in the config file?
@@ -170,9 +172,6 @@ public class peerProcess{
           connectedClients[i] = false;
         }
 
-        // Connect to previous peers
-        // Will need to be setup as a loop, currently goes to previous
-
         // Listen on port
         int thisPort = (peerInfoVector.elementAt(selfPos).getListeningPort());
         int thisPeerID = (peerInfoVector.elementAt(selfPos).getPeerID());
@@ -206,8 +205,8 @@ public class peerProcess{
             // Find position of peer in vectors
             int location = -1;
             for (int i = 0; i < clients.size(); i++) {
-              if (clients.get(i).getPeerID() == handshakePeerID) {
-                System.out.println("I: " + i);
+              if (clients.get(i).getServerID() == handshakePeerID) {
+                location = i;
               }
             }
             // Check that peerID is valid from the configuration file
@@ -215,7 +214,14 @@ public class peerProcess{
               // TODO: error message or exception or something, not super important but should probably do it if we have time
             }
             else {
+              // Check if handshake message has already been sent to and received by the peer that initiated this handShakeMsg
+              // If handshake has not been made the other way, send a message back to complete the handshake
+              if (connectedClients[location] != true) {
+                clients.get(location).connect();
+              }
 
+              // Mark the peer as connected
+              connectedClients[location] = true;
             }
           }
 
@@ -324,7 +330,7 @@ public class peerProcess{
     public static  ArrayList<RemotePeerInfo> getInterestedPeers(){
         return interestedPeers;
     }
-    
+
     public static void checkFinish() {
     	for(RemotePeerInfo remotePeerInfo:peerProcess.peerInfoVector){
     		if(remotePeerInfo.pieceIndex.size()<peerProcess.maxPieces) {
