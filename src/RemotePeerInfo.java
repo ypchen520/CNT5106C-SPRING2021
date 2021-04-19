@@ -16,7 +16,7 @@ public class RemotePeerInfo {
     private int listeningPort;
     private int hasFileOrNot;
     public boolean hasCompleteFile;
-    public int downlowdingRatePiece;
+    public int downloadingRatePiece;
     public boolean choke;
     public int index;
 
@@ -65,6 +65,6 @@ public class RemotePeerInfo {
     }
 
     public void resetDownlowdingRatePiece(){
-        this.downlowdingRatePiece=0;
+        this.downloadingRatePiece=0;
     }
 }

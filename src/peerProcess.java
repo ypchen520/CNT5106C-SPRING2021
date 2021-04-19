@@ -9,12 +9,15 @@ import java.net.*;
 
 // TODO: Add logging
 public class peerProcess{
+	
+	public static int indexID;
     // getConfiguration method reads in the PeerInfo cfg file.
     // Original code from the StartRemotePeers.java file provided on the course website
     static Vector<RemotePeerInfo> peerInfoVector = new Vector<RemotePeerInfo>();
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
+    
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
 
@@ -135,7 +138,7 @@ public class peerProcess{
 
                 bytes[] Length = Arrays.copyOfRange(bytes,0,4);
                 int messageLength = MessageHandle.getMessageLength(Length);
-                …and also type and payload……
+                鈥nd also type and payload鈥︹��
                 ActualMessage actualmessage = new Actualmessage(messageLength,messageType,messagePayload);
 
                 MessageHandler.onReceivePayload(actualMessage)
