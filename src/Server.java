@@ -62,7 +62,7 @@ public class Server {
     }
   }
 
-  // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for
+  // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for the client and server to run from a single process
   public String keepListening() {
     String inText = "N/A";
     String outText;

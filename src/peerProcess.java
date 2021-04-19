@@ -152,31 +152,22 @@ public class peerProcess{
 
         */
 
-        // Connect to peers (testing if statement, hostname, and port numbers, will need to change to work based on the cfg file)
-        // Will need to loop to handshake with all previous peers in the cfg file, among other things
-        if (selfPos != 0) {
-          // Should change this to be an overloaded constructor to avoid all these unnecessary lines but when I tried it something broke so I just did this for testing and to be able to move on
-
-
-          int newPeerID = peerInfoVector.elementAt(selfPos).getPeerID();
-          int newServerPort = peerInfoVector.elementAt(selfPos - 1).getListeningPort();
-          String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
-          String newServerName = peerInfoVector.elementAt(selfPos - 1).getHostName();
-          int newServerID = peerInfoVector.elementAt(selfPos - 1).getPeerID();
-          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
-          // newClient.connect();
-
-        }
-
         // Create vector of clients for each peer in the configuration file
         for (int i = 0; i < peerInfoVector.size(); i++) {
           int newPeerID = peerInfoVector.elementAt(selfPos).getPeerID();
           int newServerPort = peerInfoVector.elementAt(i).getListeningPort();
-          String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
+          // String newMessage = String.valueOf(peerInfoVector.elementAt(selfPos).getPeerID());
+          HandshakeMessage newHandshake = new HandshakeMessage(peerID);
+          byte[] newMessage = newHandshake.createHandshake();
+
           String newServerName = peerInfoVector.elementAt(i).getHostName();
           int newServerID = peerInfoVector.elementAt(i).getPeerID();
           Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
           clients.add(newClient);
+        }
+        boolean[] connectedClients = new boolean[clients.size()];
+        for (int i = 0; i < clients.size(); i++) {
+          connectedClients[i] = false;
         }
 
         // Connect to previous peers
@@ -189,17 +180,20 @@ public class peerProcess{
         Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers);
 
         listenServer.startListening();
-        boolean finishedListening = true;
-        boolean initialConnect = false;
-        while(finishedListening) {
+        boolean finishedListening = false;
+        boolean initialConnect = true;
+        while(!finishedListening) {
           // If this is the first iteration of the loop, connect to all previous peers
-          if (!initialConnect) {
+          if (initialConnect) {
             for (int i = 0; i < selfPos; i++) {
                 clients.get(i).connect();
+                connectedClients[i] = true;
             }
             initialConnect = true;
           }
-          // Send next data from clients
+          // Send next data from clients\
+          // Use the transmit function here
+
 
 
           // Receive next data from peers
