@@ -1,15 +1,20 @@
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.rmi.Remote;
 import java.io.*;
 import java.util.*;
 
 public class Peers {
-	private static CommonUtil comUtil;
+	private static int peerID;
+    private static CommonUtil comUtil;
 	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
+    private Logger logger;
 
-	public Peers(CommonUtil comUtil) {
+	public Peers(CommonUtil comUtil, int peerID) {
 		Peers.comUtil = comUtil;
+        Peers.peerID = peerID;
+        this.logger = new Logger(peerID);
 	}
 
 	// An arraylist stores the preferred neighbors
@@ -219,8 +224,12 @@ public class Peers {
 		peerProcess.checkFinish();
 	}
 
-    public static void receiveRequestMsg(ActualMessage m, ){
-
+    public void receiveRequestMsg(ActualMessage m, int id){
+		//no need to log
+        //logger.logReceivingMessages(id,"receive");
+        String pieceIndex = new String(m.getPayload(), StandardCharsets.UTF_8);
+        //if unchoked:
+        //sendPieceMsg(pieceIndex);
     }
 
 	private static void sendUnchokeMsg() {
