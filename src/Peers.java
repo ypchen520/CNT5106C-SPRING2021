@@ -1,3 +1,11 @@
+// TODO: rename to MessageHandler (filename, classname, and constructor)
+
+// TODO: Implement Bitfield, Request, and Piece
+
+// TODO: sender functions
+
+// TODO: pass in Vector<client>
+
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.rmi.Remote;
@@ -53,7 +61,7 @@ public class Peers {
 						// reset the downloading rate to 0;
 						// request peerProcess add getPeerInfoVector
 						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
-							tempPeer.resetDownlowdingRatePiece();
+							tempPeer.resetDownloadingRatePiece();
 						}
 
 					} else {
@@ -191,7 +199,7 @@ public class Peers {
 		interestedPeers.remove(containedPeer);
 
 	}
-	
+
 	public static void receiveHaveMsg(ActualMessage m, int id) {
 		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
 		try {

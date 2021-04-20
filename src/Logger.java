@@ -90,7 +90,7 @@ public class Logger {
         final String[] setValues = new String[] { "have", "interested", "not interested" };
         final Set<String> msgTypeSet = new HashSet<>(Arrays.asList(setValues));
         if(!msgTypeSet.contains(messageType)){
-            System.out.println("[logTitForTat] Unknown message type");
+            System.out.println("[logReceivingMessages] Unknown message type");
         }else{
             writeToLog(formatDate(new Date()) + "Peer " + peerID + " received the '" + messageType + "' message from " + peerID2 + ".");
         }

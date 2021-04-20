@@ -1,3 +1,5 @@
+// TODO: swap Strings to Byte[]
+
 import java.net.*;
 import java.io.*;
 import java.nio.*;
@@ -47,15 +49,9 @@ public class Server {
   // Start listening to the port number
   public void startListening() {
     try {
-      // TODO: Data logging
-
       listener = new ServerSocket(listeningPort);
-
-      // Maybe handle handshake stuff here?
-
     }
     catch (Exception e) {
-      //TODO: exception handling
       System.out.print("Error starting listening on port");
       e.printStackTrace();
       System.out.println(e);

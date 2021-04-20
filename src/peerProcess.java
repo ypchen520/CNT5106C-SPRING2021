@@ -1,3 +1,7 @@
+// TODO: setup directory structure and
+
+// TODO: swap Strings to Byte[] for Client/Server objects
+
 // package src;
 
 import java.util.Scanner;
@@ -22,6 +26,7 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
+    static Vector<Peers> thisPeers = new Vector<Peers>();
 
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
@@ -112,7 +117,7 @@ public class peerProcess{
         thisLog = new Logger(peerID);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
-        // TODO: Check for duplicat IDs in the config file?
+        // TODO: Check for duplicate IDs in the config file?
         int selfPos = -1;
         int pos = 0;
 
@@ -248,11 +253,28 @@ public class peerProcess{
               // Mark the peer as connected
               connectedClients[location] = true;
             }
+
+            // TODO:
+            // Send BITFIELD
+            // Make ActualMessage object with information
+            // Call ActualMessage.createMessage() to generate the byte[] message
+            // Send the byte[] message through the appropriate client
+
           }
           // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
           else if (inMessage != "N/A") {
+            // TODO:
             // ActualMessage receivedMessage = new ActualMessage()
+            // Make a new ActualMessage to put in function
+            // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is
+
+            // TODO: have ActualMessage object
+            // Create Peer object (or have a vector of them already setup? not sure)
+            // Call the correct function based on message type
+            // Modify the Peer object to get passed the Logger object so it can do data logging stuff
+            // Modify Peer class to get passed the Vector of clients
           }
+
         }
       }
       else {
@@ -271,6 +293,9 @@ public class peerProcess{
     			return;
     		}
     	}
+      // TODO: Close clients and server
+
+      // TODO: Write log to file
     	System.exit(0);
     }
 }

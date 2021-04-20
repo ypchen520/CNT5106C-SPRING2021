@@ -1,3 +1,5 @@
+// TODO: swap Strings to Byte[]
+
 import java.net.*;
 import java.io.*;
 import java.nio.*;
