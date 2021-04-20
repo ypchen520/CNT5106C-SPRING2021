@@ -45,7 +45,7 @@ public class MessageHandler {
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
 							downloadingRateList.add(tempPeer);
 						}
-							
+
 						// sort the downloadingRateList according to the downloading rate from high to
 						// low
 						downloadingRateList.sort(new Comparator<RemotePeerInfo>() {
@@ -60,7 +60,7 @@ public class MessageHandler {
 								preferredNeighborList.add(tempPeer.getPeerID());
 							}
 						}
-						
+
 						// reset the downloading rate to 0;
 						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
 							tempPeer.resetDownloadingRatePiece();
@@ -232,7 +232,7 @@ public class MessageHandler {
 		RemotePeerInfo remotePeerInfo = peerProcess.peerInfoVector.get(peerProcess.indexID);
 		// i don't have fileIndex piece && i'm not interested in you now
 		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(client.serverID)) {
-		
+
 			sendInterestedMsg(client);
 		}
 
@@ -307,7 +307,7 @@ public class MessageHandler {
 	}
 
 	public static void sendInterestedMsg(Client client) {
-		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.INTERESTED, null);		
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.INTERESTED, null);
 		client.sendMessage(actualMessage);
 	}
 
@@ -326,7 +326,7 @@ public class MessageHandler {
 		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
-		
+
 	}
 
 	public static void receiveBitfieldMsg(ActualMessage m,Client client) {
@@ -339,6 +339,7 @@ public class MessageHandler {
 				return;
 			}
 		}
+    System.out.println("Type: " + m.getMessageType());
 	}
 
 	public void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{

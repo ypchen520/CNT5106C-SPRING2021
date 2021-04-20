@@ -13,13 +13,18 @@ public class Server {
   int numPrevPeers;
   ServerSocket listener;
   Logger log;
+  MessageHandler thisMsgHandler;
+  Vector<Client> clients;
+
 
   // Constructor
-  public Server(int inID, int inPort, int inNum, Logger inLogger) {
+  public Server(int inID, int inPort, int inNum, Logger inLogger, MessageHandler inHandler, Vector<Client> inClients) {
     peerID = inID;
     listeningPort = inPort;
     numPrevPeers = inNum;
     log = inLogger;
+    thisMsgHandler = inHandler;
+    clients = inClients;
   }
 
   // Get function for port number
@@ -73,9 +78,6 @@ public class Server {
       DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
 
       // Read in the handshake message
-
-
-      // Read the first 4 bytes to determine the remaining length of the message
       clientIn.read(inHandshake, 0, 32);
 
       // Get the peerID from the last 4 bytes of the message
@@ -103,7 +105,21 @@ public class Server {
 
         // Log connection from
         log.logTcpConnection(serverID, "from");
+
+        // Send BITFIELD message
+        // Find the correct client
+        int position = -1;
+        for (int i = 0; i < clients.size(); i++) {
+          if (clients.get(i).getServerID() == serverID) {
+            position = i;
+          }
+        }
+        if (position != -1) {
+          System.out.println("Sent bitfield");
+          thisMsgHandler.sendBitfieldMsg(clients.get(position));
+        }
       }
+      clients.get(serverPos).readMessage();
     }
     catch (Exception e) {
       System.out.print("Error connecting to incoming handshake");

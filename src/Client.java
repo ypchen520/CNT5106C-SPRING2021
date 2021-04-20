@@ -18,15 +18,19 @@ public class Client {
   int serverID;
   int serverPort;
   Logger log;
+  MessageHandler thisMsgHandler;
+  Vector<Client> clients;
 
   // Constructor
-  public Client(byte[] inMessage, String inServer, int inPeerID, int inServerID, int inServerPort, Logger inLogger) {
+  public Client(byte[] inMessage, String inServer, int inPeerID, int inServerID, int inServerPort, Logger inLogger, MessageHandler inHandler, Vector<Client> inClients) {
     message = inMessage;
     serverName = inServer;
     peerID = inPeerID;
     serverID = inServerID;
     serverPort = inServerPort;
     log = inLogger;
+    thisMsgHandler = inHandler;
+    clients = inClients;
   }
 
   public void setSocket(Socket inSocket) {
@@ -148,16 +152,33 @@ public class Client {
         int serverID = Integer.parseInt(tempString);
 
         log.logTcpConnection(serverID, "from");
+
+        // Send BITFIELD message
+        // Find the correct client
+        int position = -1;
+        for (int i = 0; i < clients.size(); i++) {
+          if (clients.get(i).getServerID() == serverID) {
+            position = i;
+          }
+        }
+        if (position != -1) {
+          System.out.println("Sent bitfield");
+          thisMsgHandler.sendBitfieldMsg(clients.get(position));
+        }
+        this.readMessage();
+
       }
       else {
         // Message is ActualMessage
+        System.out.println("Received non-handshake message");
 
         //TODO: swap this from being placeholder length to actually working code, this else statement won't be reached yet so just need to initialize things for it to compile
         messageLength = Utils.convertByteArrayToInt(msgLength);
+        System.out.println("Message length: " + messageLength);
         inType = new byte[1];
         inBytes = new byte[messageLength - 1];
         clientIn.read(inType, 0, 1);
-        clientIn.read(inBytes, 0, messageLength);
+        clientIn.read(inBytes, 0, messageLength - 1);
 
         // fullMessage = new byte[msgLength.length + inBytes.length];
         // System.arraycopy(msgLength, 0, fullMessage, 0, msgLength.length);
@@ -193,6 +214,7 @@ public class Client {
                 break;
             case (byte) 5:
                 actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
+                thisMsgHandler.receiveBitfieldMsg(actualMsg, this);
                 break;
             case (byte) 6:
                 actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
@@ -203,6 +225,8 @@ public class Client {
             default:
                 System.out.println("Wrong type");
         }
+
+        System.out.println("Type: " + typeRaw);
 
       }
 

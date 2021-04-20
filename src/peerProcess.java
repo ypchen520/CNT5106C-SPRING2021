@@ -24,7 +24,7 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
-    static Vector<MessageHandler> thisMsgHandler = new Vector<MessageHandler>();
+    // static Vector<MessageHandler> thisMsgHandler = new Vector<MessageHandler>();
 
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
@@ -180,6 +180,8 @@ public class peerProcess{
         getCommon();
         thisLog = new Logger(peerID);
         thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerProcess.hasOriginalFile);
+        MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler);
+
 
         // Find position of the peerID from the command line arguments in peerInfoVector
         int selfPos = -1;
@@ -240,7 +242,7 @@ public class peerProcess{
 
           String newServerName = peerInfoVector.elementAt(i).getHostName();
           int newServerID = peerInfoVector.elementAt(i).getPeerID();
-          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort, thisLog);
+          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort, thisLog, thisMsgHandler, clients);
           clients.add(newClient);
         }
         boolean[] connectedClients = new boolean[clients.size()];
@@ -252,7 +254,7 @@ public class peerProcess{
         int thisPort = (peerInfoVector.elementAt(selfPos).getListeningPort());
         int thisPeerID = (peerInfoVector.elementAt(selfPos).getPeerID());
         int numPrevPeers = (selfPos);
-        Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers, thisLog);
+        Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers, thisLog, thisMsgHandler, clients);
 
 
         // Call handshake to each peer before it in the CFG then set loop to listen for new connections
