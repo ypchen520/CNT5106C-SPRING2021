@@ -89,6 +89,9 @@ public class FileHandler {
             }
             stream.close();
         }
+        catch (Exception e){
+            System.out.println("[FileHandler] " + e);
+        }
     }
 
 }
