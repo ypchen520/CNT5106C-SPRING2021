@@ -71,7 +71,7 @@ public class RemotePeerInfo {
         this.hasFileOrNot = hasFileOrNot;
     }
 
-    public void resetDownlowdingRatePiece(){
+    public void resetDownloadingRatePiece(){
         this.downloadingRatePiece=0;
     }
     
