@@ -281,6 +281,7 @@ public class MessageHandler {
 		if(!pieces.contains(pieceIndex)){
 			pieces.add(pieceIndex);
 		}
+		peerProcess.peerInfoVector.get(peerProcess.indexID).downloadingRatePiece++;
 		logger.logDownloadingPiece(client.serverID, pieceIndex, pieces.size());
 		fileHandler.downloadPiece(piece, pieceIndex);
 
