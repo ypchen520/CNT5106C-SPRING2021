@@ -254,6 +254,10 @@ public class peerProcess{
               connectedClients[location] = true;
             }
           }
+          // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
+          else if (inMessage != "N/A") {
+            // ActualMessage receivedMessage = new ActualMessage()
+          }
 
           System.out.println(inMessage.getBytes().length);
         }
