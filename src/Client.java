@@ -92,7 +92,9 @@ public class Client {
 
       String messageString = new String(message, StandardCharsets.UTF_8);
 
-      outStream.writeBytes(messageString + '\n');
+      // outStream.writeBytes(messageString + '\n');
+
+      outStream.write(message);
 
       returnedMessage = inStream.readLine();
 
@@ -146,6 +148,11 @@ public class Client {
       e.printStackTrace();
       System.out.println(e);
     }
+  }
+
+  public void sendMessage(ActualMessage msg) {
+    this.setMessage(msg.createMessage());
+    transmit();
   }
 
   void closeSocket() {

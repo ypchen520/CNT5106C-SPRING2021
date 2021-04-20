@@ -15,6 +15,7 @@ import java.util.*;
 // import src.RemotePeerInfo;
 import java.net.Socket;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 public class peerProcess{
 
@@ -270,9 +271,10 @@ public class peerProcess{
 
 
           // Receive next data from peers
-          String inMessage = listenServer.keepListening();
+          byte[] inMessage = listenServer.keepListening();
           // If message is a handshake, return a handshake and add the peer to the connected clients list
-          if (inMessage.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
+          String inMessageString = new String(inMessage, StandardCharsets.UTF_8);
+          if (inMessageString.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
             // Get ID of peer that sent the handshake
             int handshakePeerID = Integer.parseInt(inMessage.substring(inMessage.length() - 4));
             // Find position of peer in vectors
@@ -322,7 +324,7 @@ public class peerProcess{
 
           }
           // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
-          else if (inMessage != "N/A") {
+          else if (inMessage != null) {
             // TODO: {Yu-Peng} - old MessageHandler functions
             // ActualMessage receivedMessage = new ActualMessage()
             // Make a new ActualMessage to put in function

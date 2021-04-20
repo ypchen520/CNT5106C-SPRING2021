@@ -59,8 +59,9 @@ public class Server {
   }
 
   // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for the client and server to run from a single process
-  public String keepListening() {
+  public byte[] keepListening() {
     String inText = "N/A";
+    byte[] inArray = null;
     String outText;
     try {
       Socket connectionSocket = listener.accept();
@@ -70,6 +71,8 @@ public class Server {
       DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
 
       inText = clientIn.readLine();
+
+      inArray = inText.getBytes();
 
       outText = "Peer " + inText + " has successfully reached server " + peerID + "\n";
 
@@ -81,7 +84,7 @@ public class Server {
       e.printStackTrace();
       System.out.println(e);
     }
-    return inText;
+    return inArray;
   }
 
 }

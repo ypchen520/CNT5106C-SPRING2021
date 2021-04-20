@@ -15,7 +15,7 @@ public class MessageHandler {
 	private static int peerID;
     private static CommonUtil comUtil;
 	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
-    private Logger logger;
+    private static Logger logger;
 
 	public MessageHandler(CommonUtil comUtil, int peerID) {
 		MessageHandler.comUtil = comUtil;
@@ -105,7 +105,7 @@ public class MessageHandler {
 							actualMessage.setMessageLength(actualMessage.getMessageLength());
 							// TODO send unchoke message
 							client.sendMessage(actualMessage);
-							
+
 							tempPeer.choke = true;
 						}
 					}
@@ -126,7 +126,7 @@ public class MessageHandler {
 					for(Client client:peerProcess.clients) {
 						clientMap.put(client.getServerID(), client);
 					}
-					
+
 					ArrayList<Integer> chockedPeerList = new ArrayList<>();
 					Set<Integer> interestedSet = new HashSet<>();
 					for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
@@ -200,9 +200,9 @@ public class MessageHandler {
 			interestedPeers.add(containedPeer);
 		}
 	}
-	
 
-	
+
+
 
 	public static void receiveNotInterestedMsg(ActualMessage m, Client client) {
 		try {
@@ -226,10 +226,10 @@ public class MessageHandler {
 		interestedPeers.remove(containedPeer);
 
 	}
-	
-	
-	
-	
+
+
+
+
 
 	public static void receiveHaveMsg(ActualMessage m, Client client) {
 		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
@@ -255,21 +255,24 @@ public class MessageHandler {
 			// TODO send intersted message to id
 		}
 
-		peerProcess.checkFinish();
+		peerProcess.checkFinish(logger);
 	}
-	
+
 
     public static void receiveRequestMsg(ActualMessage m, Client client){
 		//no need to log
         //logger.logReceivingMessages(id,"receive");
         int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
+        // DONALD: I'm adding these so the program will compile, I don't know about their usage so I'm guessing this is just not fully finished yet
+        byte[] piece;
+        int id;
         //if unchoked:
         sendPieceMsg(pieceIndex, piece, id);
     }
-   
+
     public static void receivePieceMsg(Client client) {}
 
-	public void sendPieceMsg(int pieceIndex, byte[] piece, int id) throws Exception{
+	public static void sendPieceMsg(int pieceIndex, byte[] piece, int id) throws Exception{
 		ByteArrayOutputStream msg = new ByteArrayOutputStream();
 		msg.write(Utils.convertIntToByteArray(pieceIndex));
 		msg.write(piece);
@@ -292,15 +295,15 @@ public class MessageHandler {
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
 		client.sendMessage(actualMessage);
 	}
-	
+
 	public void sendHaveMsg(Client client,int index) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.HAVE);
 		actualMessage.setPayload(Utils.convertIntToByteArray(index));
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
 		client.sendMessage(actualMessage);
-	}	
-	
+	}
+
 	public void sendBitfieldMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.BITFIELD);
@@ -308,7 +311,7 @@ public class MessageHandler {
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
 		client.sendMessage(actualMessage);
 	}
-	
+
 	public void receiveBitfieldMsg(ActualMessage m,Client client) {
 		byte[] bytes = m.getPayload();
 		Set<Integer> convertSet = new HashSet<>();
@@ -320,13 +323,13 @@ public class MessageHandler {
 			}
 		}
 	}
-	
+
 	public void receiveUnchokeMsg(ActualMessage m,Client client) {
-	
+
 		//TODO:logger
 		this.sendRequestMsg(m,client);
 	}
-	
+
 	private void sendRequestMsg(ActualMessage m, Client client) {
 		//TODO:log{Yu-peng}
 				RemotePeerInfo clientPeer = new RemotePeerInfo();
@@ -346,8 +349,8 @@ public class MessageHandler {
 				actualMessage.setPayload(Utils.convertIntToByteArray(requiredPieces.get(0)));
 				actualMessage.setMessageType(ActualMessage.MessageType.REQUEST);
 				actualMessage.setMessageLength(actualMessage.getMessageLength());
-				
-				
+
+
 	}
 
 	public void receiveChokeMsg(ActualMessage m,Client client) {
