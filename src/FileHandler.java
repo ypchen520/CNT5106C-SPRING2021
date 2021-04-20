@@ -45,7 +45,7 @@ public class FileHandler {
 
     private void getNumPieces(){
         // int numPieces = 0;
-        this.maxPieces = (int)Math.ceil(fileSize/pieceSize);
+        this.maxPieces = (int)Math.ceil(fileSize*1.0f/pieceSize);
         // return numPieces;
     }
 
