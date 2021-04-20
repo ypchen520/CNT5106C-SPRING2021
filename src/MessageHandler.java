@@ -227,13 +227,23 @@ public class MessageHandler {
 		peerProcess.checkFinish();
 	}
 
-    public void receiveRequestMsg(ActualMessage m, int id){
+    public void receiveRequestMsg(ActualMessage m, int id) throws Exception{
 		//no need to log
         //logger.logReceivingMessages(id,"receive");
-        String pieceIndex = new String(m.getPayload(), StandardCharsets.UTF_8);
+        int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
         //if unchoked:
-        //sendPieceMsg(pieceIndex);
+        sendPieceMsg(pieceIndex, piece, id);
     }
+
+	public void sendPieceMsg(int pieceIndex, byte[] piece, int id) throws Exception{
+		ByteArrayOutputStream msg = new ByteArrayOutputStream();
+		msg.write(Utils.convertIntToByteArray(pieceIndex));
+		msg.write(piece);
+		byte[] payload = msg.toByteArray();
+		ActualMessage pieceMsgCreator = new ActualMessage(ActualMessage.MessageType.PIECE, payload);
+		byte[] pieceMsg = pieceMsgCreator.createMessage();
+		//TODO: send [pieceMsg] to peer[id] using the client
+	}
 
 	private static void sendUnchokeMsg() {
 		// TODO

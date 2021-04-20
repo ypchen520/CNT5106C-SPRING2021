@@ -79,7 +79,7 @@ public class ActualMessage {
         // Piece messages have a payload which consists of a 4-byte piece index field and the content of the piece.
         ByteArrayOutputStream msgWithLen = new ByteArrayOutputStream();
         calculateLength();
-        byte[] msgLen = intToBytes(this.messageLength);
+        byte[] msgLen = Utils.convertIntToByteArray(this.messageLength);
         msgWithLen.write(msgLen);
         msgWithLen.write(messageWithoutLen);
         return msgWithLen.toByteArray();
@@ -108,12 +108,12 @@ public class ActualMessage {
         this.messageLength = messageWithoutLen.length;
     }
 
-    private byte[] intToBytes(final int data){
-        return new byte[] {
-            (byte)((data >> 24) & 0xff),
-            (byte)((data >> 16) & 0xff),
-            (byte)((data >> 8) & 0xff),
-            (byte)((data >> 0) & 0xff),
-        };
-    }
+    // private byte[] intToBytes(final int data){
+    //     return new byte[] {
+    //         (byte)((data >> 24) & 0xff),
+    //         (byte)((data >> 16) & 0xff),
+    //         (byte)((data >> 8) & 0xff),
+    //         (byte)((data >> 0) & 0xff),
+    //     };
+    // }
 }

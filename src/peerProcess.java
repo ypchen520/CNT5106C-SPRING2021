@@ -271,7 +271,7 @@ public class peerProcess{
             byte typeRaw = inMessage[4];
             byte[] msgPayloadRaw = Arrays.copyOfRange(inMessage, 5, inMessage.length);
 
-            int msgLen = convertByteArrayToInt(msgLenRaw);
+            int msgLen = Utils.convertByteArrayToInt(msgLenRaw);
             actualMsg.setMessageLength(msgLen);
             actualMsg.setPayload(msgPayloadRaw);
 
@@ -337,14 +337,14 @@ public class peerProcess{
     	System.exit(0);
     }
 
-    private static int convertByteArrayToInt(byte[] data) {
-      if (data == null || data.length != 4) return 0x0;
-      // ----------
-      return (int)( // NOTE: type cast not necessary for int
-              (0xff & data[0]) << 24  |
-              (0xff & data[1]) << 16  |
-              (0xff & data[2]) << 8   |
-              (0xff & data[3]) << 0
-      );
-    }
+    // private static int convertByteArrayToInt(byte[] data) {
+    //   if (data == null || data.length != 4) return 0x0;
+    //   // ----------
+    //   return (int)( // NOTE: type cast not necessary for int
+    //           (0xff & data[0]) << 24  |
+    //           (0xff & data[1]) << 16  |
+    //           (0xff & data[2]) << 8   |
+    //           (0xff & data[3]) << 0
+    //   );
+    // }
 }
