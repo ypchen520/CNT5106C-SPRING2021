@@ -87,7 +87,7 @@ public class peerProcess{
            String hostname = tokens[1];
            int port = Integer.parseInt(tokens[2]);
            int hasFile = Integer.parseInt(tokens[3]);
-           peerProcess.hasOriginalFile = hasFile;
+           // peerProcess.hasOriginalFile = hasFile;
              //System.out.println("tokens begin ----");
              //for (int x=0; x<tokens.length; x++) {
              //    System.out.println(tokens[x]);
@@ -179,7 +179,9 @@ public class peerProcess{
         getConfiguration();
         getCommon();
         thisLog = new Logger(peerID);
-        thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerProcess.hasOriginalFile);
+        thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerInfoVector.get(indexID).getHasFileOrNot());
+        thisFileHandler.readFromFile();
+        System.out.println("Has file: " + peerInfoVector.get(indexID).getHasFileOrNot());
         MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler);
 
 
@@ -191,7 +193,7 @@ public class peerProcess{
           if (peerID == peerInfoVector.get(pos).getPeerID()) {
               selfPos = pos;
               indexID=selfPos;
-              if(peerProcess.hasOriginalFile==1) {
+              if(peerInfoVector.get(indexID).getHasFileOrNot()==1) {
             	  for(int i =0;i<maxPieces-1;i++) {
             		  peerInfoVector.get(pos).pieceIndex.add(i);
             	  }

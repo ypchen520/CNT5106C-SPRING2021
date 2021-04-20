@@ -324,9 +324,10 @@ public class MessageHandler {
 
 	public static void sendBitfieldMsg(Client client) {
 		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
+    System.out.println("This is " + payload);
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
-
+    System.out.println("Client ID is " + client.getPeerID());
 	}
 
 	public static void receiveBitfieldMsg(ActualMessage m,Client client) {

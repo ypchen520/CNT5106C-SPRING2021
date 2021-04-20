@@ -45,7 +45,7 @@ public class FileHandler {
 
     private void calculateMaxPieces(){
         // int numPieces = 0;
-        this.maxPieces = (int)Math.ceil(fileSize*1.0f/pieceSize);
+        FileHandler.maxPieces = (int)Math.ceil(fileSize*1.0f/pieceSize);
         // return numPieces;
     }
 
@@ -66,7 +66,7 @@ public class FileHandler {
             // String dirName = "peer_" + String.valueOf(peerID);
             String filePath = subDirName+fileName;
             File f = new File(filePath);
-            if(!f.exists() && hasOriginalFile == 1){
+            if(f.exists() && hasOriginalFile == 1){
                 byte[] data = Files.readAllBytes(Paths.get(filePath));
                 for(int i = 0; i < maxPieces; i++){
                     if(i != maxPieces-1){
