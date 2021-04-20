@@ -31,6 +31,7 @@ public class Logger {
 
     private static void writeToLog(String content) throws IOException{
         log.add(content);
+        System.out.println(content);
     }
 
     private void writeToFile() throws IOException{

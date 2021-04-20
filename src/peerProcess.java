@@ -68,10 +68,10 @@ public class peerProcess{
       int i1;
       try {
         // Read in configuration file
-        BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
+        // BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 
         // Alternative configuration file for local testing, leave one of them commented out
-        // BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
+        BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
 
         while((st = in.readLine()) != null) {
 
@@ -122,8 +122,7 @@ public class peerProcess{
           }
           pos++;
         }
-        System.out.print("Self listening port: " + peerInfoVector.elementAt(selfPos).getListeningPort());
-        System.out.print("\n");
+        System.out.println("Self listening port: " + peerInfoVector.elementAt(selfPos).getListeningPort());
 
         //If not in CFG output an error
         if (selfPos == -1) {
@@ -183,10 +182,6 @@ public class peerProcess{
         boolean initialConnect = true;
         while(!finishedListening) {
           // If this is the first iteration of the loop, connect to all previous peers
-          // Testing loop delete later
-          for (int i = 0; i < thisLog.getLog().size(); i++) {
-            System.out.println(thisLog.getLog().get(i));
-          }
 
           if (initialConnect) {
             for (int i = 0; i < selfPos; i++) {
@@ -258,8 +253,6 @@ public class peerProcess{
           else if (inMessage != "N/A") {
             // ActualMessage receivedMessage = new ActualMessage()
           }
-
-          System.out.println(inMessage.getBytes().length);
         }
       }
       else {
