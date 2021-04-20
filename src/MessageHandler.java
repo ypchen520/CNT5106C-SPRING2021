@@ -233,6 +233,7 @@ public class MessageHandler {
 		// i don't have fileIndex piece && i'm not interested in you now
 		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(client.serverID)) {
 			// TODO send intersted message to id
+			sendInterestedMsg(client);
 		}
 
 		try {
@@ -313,7 +314,7 @@ public class MessageHandler {
 		client.sendMessage(actualMessage);
 	}
 
-	public void receiveBitfieldMsg(ActualMessage m,Client client) {
+	public static void receiveBitfieldMsg(ActualMessage m,Client client) {
 		byte[] bytes = m.getPayload();
 		Set<Integer> convertSet = new HashSet<>();
 		convertSet = Utils.convertByteArrToPieceSet(bytes);
@@ -327,10 +328,10 @@ public class MessageHandler {
 
 	public void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{
 		logger.logTitForTat(client.serverID, "unchoke");
-		this.sendRequestMsg(m,client);
+		sendRequestMsg(m,client);
 	}
 
-	private void sendRequestMsg(ActualMessage m, Client client) {
+	private static void sendRequestMsg(ActualMessage m, Client client) {
 		//TODO:log{Yu-peng}
 		//no need to log
 		RemotePeerInfo clientPeer = new RemotePeerInfo();
