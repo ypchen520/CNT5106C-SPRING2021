@@ -284,6 +284,13 @@ public class MessageHandler {
 		peerProcess.peerInfoVector.get(peerProcess.indexID).downloadingRatePiece++;
 		logger.logDownloadingPiece(client.serverID, pieceIndex, pieces.size());
 		fileHandler.downloadPiece(piece, pieceIndex);
+		RemotePeerInfo clientPeer = new RemotePeerInfo();
+		for(RemotePeerInfo p:peerProcess.peerInfoVector) {
+			if(p.getPeerID()==client.serverID) {
+				clientPeer = p;
+			}
+		}
+		clientPeer.requested = false;
 
 		//send have message?
 		sendHaveMsg(client, pieceIndex);
@@ -365,6 +372,13 @@ public class MessageHandler {
 
 	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
 		logger.logTitForTat(client.serverID, "choke");
+		RemotePeerInfo clientPeer = new RemotePeerInfo();
+		for(RemotePeerInfo p:peerProcess.peerInfoVector) {
+			if(p.getPeerID()==client.serverID) {
+				clientPeer = p;
+			}
+		}
+		clientPeer.requested = false;
 		return;
 	}
 
