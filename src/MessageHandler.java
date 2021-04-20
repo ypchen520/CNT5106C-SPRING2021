@@ -16,11 +16,13 @@ public class MessageHandler {
     private static CommonUtil comUtil;
 	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
     private static Logger logger;
+	private static FileHandler fileHandler;
 
-	public MessageHandler(CommonUtil comUtil, int peerID) {
+	public MessageHandler(CommonUtil comUtil, int peerID, Logger logger, FileHandler fh) {
 		MessageHandler.comUtil = comUtil;
         MessageHandler.peerID = peerID;
-        this.logger = new Logger(peerID);
+        MessageHandler.logger = logger;
+		MessageHandler.fileHandler = fh;
 	}
 
 	// An arraylist stores the preferred neighbors
@@ -286,7 +288,9 @@ public class MessageHandler {
 
     }
 
-    public static void receivePieceMsg(Client client) {}
+    public static void receivePieceMsg(Client client) {
+
+	}
 
 	public static void sendPieceMsg(int pieceIndex, byte[] piece, int id) throws Exception{
 		ByteArrayOutputStream msg = new ByteArrayOutputStream();

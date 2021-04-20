@@ -27,7 +27,7 @@ public class FileHandler {
         this.hasOriginalFile = hasFile;
         this.subDirName = "peer_" + String.valueOf(peerID);
         if(hasFile == 0) createSubDirectory();
-        getNumPieces();
+        calculateMaxPieces();
         divideIntoPieces();
     }
 
@@ -43,10 +43,14 @@ public class FileHandler {
         }
     }
 
-    private void getNumPieces(){
+    private void calculateMaxPieces(){
         // int numPieces = 0;
         this.maxPieces = (int)Math.ceil(fileSize/pieceSize);
         // return numPieces;
+    }
+
+    public int getMaxPieces(){
+        return maxPieces;
     }
 
     public void divideIntoPieces(){
