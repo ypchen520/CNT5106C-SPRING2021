@@ -247,14 +247,14 @@ public class MessageHandler {
 			// TODO send intersted message to id
 		}
 
-    try {
-      peerProcess.checkFinish(logger);
-    }
-    catch (Exception e) {
-      System.out.print("Error checking if finished.");
-      e.printStackTrace();
-      System.out.println(e);
-    }
+		try {
+		peerProcess.checkFinish(logger);
+		}
+		catch (Exception e) {
+		System.out.print("Error checking if finished.");
+		e.printStackTrace();
+		System.out.println(e);
+		}
 
 	}
 
@@ -264,11 +264,11 @@ public class MessageHandler {
         //logger.logReceivingMessages(id,"receive");
         int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
         // DONALD: I'm adding these so the program will compile, I don't know about their usage so I'm guessing this is just not fully finished yet
-        byte[] piece = null;
-        int id = -1;
+        // TODO
+		byte[] piece = null;
         //if unchoked:
         try {
-          sendPieceMsg(pieceIndex, piece, id);
+          sendPieceMsg(pieceIndex, piece, client);
         }
         catch (Exception e) {
           System.out.print("Error sending piece.");
@@ -278,18 +278,30 @@ public class MessageHandler {
 
     }
 
-    public static void receivePieceMsg(Client client) {
-
+    public static void receivePieceMsg(ActualMessage m, Client client) throws IOException {
+		byte[] payload = m.getPayload();
+		byte[] pieceIndexRaw = Arrays.copyOfRange(payload, 0, 4);
+		int pieceIndex = Utils.convertByteArrayToInt(pieceIndexRaw);
+		byte[] piece = Arrays.copyOfRange(payload, 4, payload.length);
+		Set<Integer> pieces = peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex;
+		if(!pieces.contains(pieceIndex)){
+			pieces.add(pieceIndex);
+		}
+		logger.logDownloadingPiece(client.serverID, pieceIndex, pieces.size());
+		fileHandler.downloadPiece(piece, pieceIndex);
+		//send have message?
+		sendHaveMsg(client, pieceIndex);
 	}
 
-	public static void sendPieceMsg(int pieceIndex, byte[] piece, int id) throws Exception{
+	public static void sendPieceMsg(int pieceIndex, byte[] piece, Client client) throws Exception{
 		ByteArrayOutputStream msg = new ByteArrayOutputStream();
 		msg.write(Utils.convertIntToByteArray(pieceIndex));
 		msg.write(piece);
 		byte[] payload = msg.toByteArray();
-		ActualMessage pieceMsgCreator = new ActualMessage(ActualMessage.MessageType.PIECE, payload);
-		byte[] pieceMsg = pieceMsgCreator.createMessage();
+		ActualMessage pieceMsg = new ActualMessage(ActualMessage.MessageType.PIECE, payload);
+		// byte[] pieceMsg = pieceMsgCreator.createMessage();
 		//TODO: send [pieceMsg] to peer[id] using the client
+		client.sendMessage(pieceMsg);
 	}
 
 	public void sendInterestedMsg(Client client) {
@@ -306,7 +318,7 @@ public class MessageHandler {
 		client.sendMessage(actualMessage);
 	}
 
-	public void sendHaveMsg(Client client,int index) {
+	public static void sendHaveMsg(Client client,int index) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.HAVE);
 		actualMessage.setPayload(Utils.convertIntToByteArray(index));
