@@ -25,10 +25,11 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
-    static Vector<Peers> thisPeers = new Vector<Peers>();
+    static Vector<MessageHandler> thisMsgHandler = new Vector<MessageHandler>();
 
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
+    public static ArrayList<Integer> requestedPieces = new ArrayList<>();
 
     static Vector<Client> clients = new Vector<Client>();
     public static int maxPieces;
