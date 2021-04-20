@@ -36,6 +36,7 @@ public class peerProcess{
     public static int maxPieces;
     public static Object lock = new Object();
     public static CommonUtil comUtil;
+    public static int hasOriginalFile;
 
     // public static void addPeerConnection(int selfPos) {
     //   try {
@@ -88,6 +89,7 @@ public class peerProcess{
            String hostname = tokens[1];
            int port = Integer.parseInt(tokens[2]);
            int hasFile = Integer.parseInt(tokens[3]);
+           peerProcess.hasOriginalFile = hasFile;
              //System.out.println("tokens begin ----");
              //for (int x=0; x<tokens.length; x++) {
              //    System.out.println(tokens[x]);
@@ -168,6 +170,7 @@ public class peerProcess{
 
       int peerID;
       Logger thisLog;
+      FileHandler thisFileHandler;
       // Check command line arguments
       // Should be one and only one argument containing the peerID
       if (args.length == 1) {
@@ -177,6 +180,7 @@ public class peerProcess{
         getConfiguration();
         getCommon();
         thisLog = new Logger(peerID);
+        thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerProcess.hasOriginalFile);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
         int selfPos = -1;
