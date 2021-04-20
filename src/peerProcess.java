@@ -34,6 +34,7 @@ public class peerProcess{
     static Vector<Client> clients = new Vector<Client>();
     public static int maxPieces;
     public static Object lock = new Object();
+    public static CommonUtil comUtil;
 
     // public static void addPeerConnection(int selfPos) {
     //   try {
@@ -104,6 +105,64 @@ public class peerProcess{
 
     }
 
+    public static void getCommon()
+    {
+      String st;
+      // int i1;
+      try {
+        // Read in common configuration file
+        // Final TODO: make sure this one is uncommented and the other is commented before submitting
+        // BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
+
+        // Alternative configuration file for local testing, leave one of them commented out
+        int numNeighbors = 0;
+        int unchockingInterval = 0;
+        int optUnchockingInterval = 0;
+        String fileName = "";
+        int fileSize = 0;
+        int pieceSize = 0;
+
+        BufferedReader in = new BufferedReader(new FileReader("Common.cfg"));
+
+        while((st = in.readLine()) != null) {
+
+            String[] tokens = st.split("\\s+");
+
+            switch(tokens[0]){
+              case "NumberOfPreferredNeighbors":
+                numNeighbors = Integer.parseInt(tokens[1]);
+                break;
+              case "UnchokingInterval":
+                unchockingInterval = Integer.parseInt(tokens[1]);
+                break;
+              case "OptimisticUnchokingInterval":
+                optUnchockingInterval = Integer.parseInt(tokens[1]);
+                break;
+              case "FileName":
+                fileName = tokens[1];
+                break;
+              case "FileSize":
+                fileSize = Integer.parseInt(tokens[1]);
+                break;
+              case "PieceSize":
+                pieceSize = Integer.parseInt(tokens[1]);
+                break;
+            }
+            //System.out.println("tokens begin ----");
+            //for (int x=0; x<tokens.length; x++) {
+            //    System.out.println(tokens[x]);
+            //}
+            //System.out.println("tokens end ----");
+        }
+        peerProcess.comUtil = new CommonUtil(numNeighbors, unchockingInterval, optUnchockingInterval, fileName, fileSize, pieceSize);
+        in.close();
+      }
+      catch (Exception ex) {
+        System.out.println(ex.toString());
+      }
+
+    }
+
     public static void main (String[] args){
 
       int peerID;
@@ -115,6 +174,7 @@ public class peerProcess{
 
         // Read in PeerInfo.cfg using a modified function provided on the course website
         getConfiguration();
+        getCommon();
         thisLog = new Logger(peerID);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
