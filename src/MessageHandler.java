@@ -255,7 +255,15 @@ public class MessageHandler {
 			// TODO send intersted message to id
 		}
 
-		peerProcess.checkFinish(logger);
+    try {
+      peerProcess.checkFinish(logger);
+    }
+    catch (Exception e) {
+      System.out.print("Error checking if finished.")";
+      e.printStackTrace();
+      System.out.println(e);
+    }
+
 	}
 
 
@@ -264,10 +272,18 @@ public class MessageHandler {
         //logger.logReceivingMessages(id,"receive");
         int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
         // DONALD: I'm adding these so the program will compile, I don't know about their usage so I'm guessing this is just not fully finished yet
-        byte[] piece;
-        int id;
+        byte[] piece = null;
+        int id = -1;
         //if unchoked:
-        sendPieceMsg(pieceIndex, piece, id);
+        try {
+          sendPieceMsg(pieceIndex, piece, id);
+        }
+        catch (Exception e) {
+          System.out.print("Error sending piece.");
+          e.printStackTrace();
+          System.out.println(e);
+        }
+
     }
 
     public static void receivePieceMsg(Client client) {}
