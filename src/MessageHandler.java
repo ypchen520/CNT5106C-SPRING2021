@@ -45,7 +45,7 @@ public class MessageHandler {
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
 							downloadingRateList.add(tempPeer);
 						}
-
+							
 						// sort the downloadingRateList according to the downloading rate from high to
 						// low
 						downloadingRateList.sort(new Comparator<RemotePeerInfo>() {
@@ -54,15 +54,14 @@ public class MessageHandler {
 								return t1.downloadingRatePiece - remotePeerInfo.downloadingRatePiece;
 							}
 						});
-
+						//TODO
 						for (RemotePeerInfo tempPeer : downloadingRateList) {
 							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
 								preferredNeighborList.add(tempPeer.getPeerID());
 							}
 						}
-
+						
 						// reset the downloading rate to 0;
-						// request peerProcess add getPeerInfoVector
 						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
 							tempPeer.resetDownloadingRatePiece();
 						}
@@ -93,19 +92,14 @@ public class MessageHandler {
 							Client client = clientMap.get(tempPeer.getPeerID());
 							ActualMessage actualMessage = new ActualMessage();
 							actualMessage.setMessageType(ActualMessage.MessageType.UNCHOKE);
-							actualMessage.setMessageLength(actualMessage.getMessageLength());
-							// TODO send unchoke message
 							client.sendMessage(actualMessage);
 							tempPeer.choke = false;
 						} else if (!preferredNeighborList.contains(tempPeer.getPeerID()) && !tempPeer.choke
 								&& optimisticUnchokeNeighbor != tempPeer.getPeerID()) {
 							// if not prefer, not choke, not opt, send choke
-							// TODO send choke message
 							Client client = clientMap.get(tempPeer.getPeerID());
 							ActualMessage actualMessage = new ActualMessage();
 							actualMessage.setMessageType(ActualMessage.MessageType.CHOKE);
-							actualMessage.setMessageLength(actualMessage.getMessageLength());
-							// TODO send unchoke message
 							client.sendMessage(actualMessage);
 
 							tempPeer.choke = true;
@@ -145,13 +139,10 @@ public class MessageHandler {
 						int index = (int) (Math.random() * chockedPeerList.size());
 						optimisticUnchokeNeighbor = peerProcess.peerInfoVector.get(chockedPeerList.get(index))
 								.getPeerID();
-						// TODO:sendmessage
 						peerProcess.peerInfoVector.get(chockedPeerList.get(index)).choke=false;
 						Client client = clientMap.get(peerProcess.peerInfoVector.get(chockedPeerList.get(index)).getPeerID());
 						ActualMessage actualMessage = new ActualMessage();
 						actualMessage.setMessageType(ActualMessage.MessageType.UNCHOKE);
-						actualMessage.setMessageLength(actualMessage.getMessageLength());
-						// TODO send unchoke message
 						client.sendMessage(actualMessage);
 						// LOGGER
 						logger.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
@@ -245,7 +236,7 @@ public class MessageHandler {
 		RemotePeerInfo remotePeerInfo = peerProcess.peerInfoVector.get(peerProcess.indexID);
 		// i don't have fileIndex piece && i'm not interested in you now
 		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(client.serverID)) {
-			// TODO send intersted message to id
+		
 			sendInterestedMsg(client);
 		}
 
@@ -381,7 +372,7 @@ public class MessageHandler {
 
 	public static void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
 		//TODO:log{Yu-peng}
-		logger.logTitForTat(client.serverID, "choke");
+		logger.logTitForTat(client.serverID, "choke");	
 		return;
 	}
 
