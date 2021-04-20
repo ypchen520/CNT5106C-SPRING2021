@@ -17,7 +17,7 @@ public class Logger {
     private String fileExtenstion = ".log";
 
     public Logger(int peerID){
-        this.peerID = peerID;
+        Logger.peerID = peerID;
     }
 
     public List<String> getLog() {
