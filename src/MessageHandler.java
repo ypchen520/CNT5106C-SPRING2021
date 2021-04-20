@@ -326,6 +326,7 @@ public class MessageHandler {
 		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
+		
 	}
 
 	public static void receiveBitfieldMsg(ActualMessage m,Client client) {
