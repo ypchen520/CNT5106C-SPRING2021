@@ -92,9 +92,9 @@ public class Client {
 
       String messageString = new String(message, StandardCharsets.UTF_8);
 
-      // outStream.writeBytes(messageString + '\n');
+      outStream.writeBytes(messageString + '\n');
 
-      outStream.write(message);
+      // outStream.write(message);
 
       returnedMessage = inStream.readLine();
 
