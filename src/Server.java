@@ -5,18 +5,21 @@ import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 
 public class Server {
   int peerID;
   int listeningPort;
   int numPrevPeers;
   ServerSocket listener;
+  Logger log;
 
   // Constructor
-  public Server(int inID, int inPort, int inNum) {
+  public Server(int inID, int inPort, int inNum, Logger inLogger) {
     peerID = inID;
     listeningPort = inPort;
     numPrevPeers = inNum;
+    log = inLogger;
   }
 
   // Get function for port number
@@ -58,30 +61,55 @@ public class Server {
     }
   }
 
-  // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order for the client and server to run from a single process
-  public byte[] keepListening() {
-    String inText = "N/A";
-    String outText;
+  // This needs to be called in a while(true) loop typically, the while loop needs to be in the peerProcess file in order to know when to end the loop inside the process
+  // Instead of returning message, perform handshake operations and return a client object
+  public void keepListening(Vector<Client> clients) {
+    byte[] inHandshake = new byte[32];
     try {
       Socket connectionSocket = listener.accept();
 
-      BufferedReader clientIn = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+      BufferedInputStream clientIn = new BufferedInputStream(connectionSocket.getInputStream());
 
       DataOutputStream clientOut = new DataOutputStream(connectionSocket.getOutputStream());
 
-      inText = clientIn.readLine();
+      // Read in the handshake message
 
-      outText = "Peer " + inText + " has successfully reached server " + peerID + "\n";
 
-      clientOut.writeBytes(outText);
+      // Read the first 4 bytes to determine the remaining length of the message
+      clientIn.read(inHandshake, 0, 32);
 
+      // Get the peerID from the last 4 bytes of the message
+      byte[] inPeerID = new byte[4];
+      for (int i = 0; i < inPeerID.length; i++) {
+        inPeerID[i] = inHandshake[28+i];
+      }
+      String tempString = new String(inPeerID, StandardCharsets.UTF_8);
+      int serverID = Integer.parseInt(tempString);
+
+      // Find the client which has the serverID
+      int serverPos = -1;
+      for (int i = 0; i < clients.size(); i++) {
+        if (clients.get(i).getServerID() == serverID) {
+          serverPos = i;
+        }
+      }
+      if (serverPos == -1) {
+        System.out.print("Error connecting to incoming handshake");
+        System.out.println("Peer " + serverID + " is not in client vector");
+      }
+      else {
+        // Modify client Socket
+        clients.get(serverPos).connect(connectionSocket);
+
+        // Log connection from
+        log.logTcpConnection(serverID, "from");
+      }
     }
     catch (Exception e) {
-      System.out.print("Error listening on port");
+      System.out.print("Error connecting to incoming handshake");
       e.printStackTrace();
       System.out.println(e);
     }
-    return inText.getBytes();
-  }
 
+  }
 }

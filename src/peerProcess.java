@@ -184,7 +184,7 @@ public class peerProcess{
         // Find position of the peerID from the command line arguments in peerInfoVector
         int selfPos = -1;
         int pos = 0;
-        
+
         while (pos < peerInfoVector.size() && selfPos == -1) {
           if (peerID == peerInfoVector.get(pos).getPeerID()) {
               selfPos = pos;
@@ -229,7 +229,8 @@ public class peerProcess{
 
         */
 
-        // Create vector of clients for each peer in the configuration file
+        // Create vector of clients initialized to have a handshake message for each peer in the configuration file
+        // Clients are not connected, so they do not have a socket or in/out streams until connect(Socket clientSocket) is called
         for (int i = 0; i < peerInfoVector.size(); i++) {
           int newPeerID = peerInfoVector.elementAt(selfPos).getPeerID();
           int newServerPort = peerInfoVector.elementAt(i).getListeningPort();
@@ -239,7 +240,7 @@ public class peerProcess{
 
           String newServerName = peerInfoVector.elementAt(i).getHostName();
           int newServerID = peerInfoVector.elementAt(i).getPeerID();
-          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort);
+          Client newClient = new Client(newMessage, newServerName, newPeerID, newServerID, newServerPort, thisLog);
           clients.add(newClient);
         }
         boolean[] connectedClients = new boolean[clients.size()];
@@ -251,140 +252,106 @@ public class peerProcess{
         int thisPort = (peerInfoVector.elementAt(selfPos).getListeningPort());
         int thisPeerID = (peerInfoVector.elementAt(selfPos).getPeerID());
         int numPrevPeers = (selfPos);
-        Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers);
+        Server listenServer = new Server(thisPeerID, thisPort, numPrevPeers, thisLog);
 
+
+        // Call handshake to each peer before it in the CFG then set loop to listen for new connections
+        // Initial handshakes
         listenServer.startListening();
         boolean finishedListening = false;
-        boolean initialConnect = true;
-        while(!finishedListening) {
-          // If this is the first iteration of the loop, connect to all previous peers
-
-          if (initialConnect) {
-            for (int i = 0; i < selfPos; i++) {
-              try {
-                clients.get(i).connect();
-                connectedClients[i] = true;
-                thisLog.logTcpConnection(clients.get(i).getServerID(), "to");
-              }
-              catch (Exception e) {
-                System.out.print("Error sending handshake to peer " + clients.get(i).getServerID());
-                e.printStackTrace();
-                System.out.println(e);
-              }
-
-            }
-            initialConnect = false;
-          }
-          // Send next data from clients\
-          // Use the transmit function here
-
-
-
-          // Receive next data from peers
-          byte[] inMessage = listenServer.keepListening();
-          // If message is a handshake, return a handshake and add the peer to the connected clients list
-          String inMessageString = new String(inMessage, StandardCharsets.UTF_8);
-          if (inMessageString.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
-            // Get ID of peer that sent the handshake
-            int handshakePeerID = Integer.parseInt(inMessage.substring(inMessage.length() - 4));
-            // Find position of peer in vectors
-            int location = -1;
-            for (int i = 0; i < clients.size(); i++) {
-              if (clients.get(i).getServerID() == handshakePeerID) {
-                location = i;
-              }
-            }
-            // Check that peerID is valid from the configuration file
-            if (location == -1) {
-              // TODO: error message or exception or something, not super important but should probably do it if we have time
+        for (int i = 0; i < selfPos; i++) {
+          Socket clientSocket;
+          try {
+            // Generate the socket (if statement is for testing purposes since "localhost" doesn't work as a serverName)
+            if (clients.get(i).getServerName().equals("localhost")) {
+              clientSocket = new Socket(InetAddress.getByName(null), clients.get(i).getServerPort());
             }
             else {
-              try {
-                thisLog.logTcpConnection(clients.get(location).getServerID(), "from");
-              }
-              catch (Exception e) {
-                System.out.print("Error receiving handshake from peer " + clients.get(location).getServerID());
-                e.printStackTrace();
-                System.out.println(e);
-              }
-
-              // Check if handshake message has already been sent to and received by the peer that initiated this handShakeMsg
-              // If handshake has not been made the other way, send a message back to complete the handshake
-              if (connectedClients[location] != true) {
-                try {
-                  clients.get(location).connect();
-                  thisLog.logTcpConnection(clients.get(location).getServerID(), "to");
-                }
-                catch (Exception e) {
-                  System.out.print("Error sending handshake to peer " + clients.get(location).getServerID());
-                  e.printStackTrace();
-                  System.out.println(e);
-                }
-              }
-
-              // Mark the peer as connected
-              connectedClients[location] = true;
+              clientSocket = new Socket(clients.get(i).getServerName(), clients.get(i).getServerPort());
             }
+            // Perform the handshake
+            clients.get(i).connect(clientSocket);
+            connectedClients[i] = true;
 
-            // TODO: - Reference new MessageHandler {Donald}
-            // Send BITFIELD
-            // Make ActualMessage object with information
-            // Call ActualMessage.createMessage() to generate the byte[] message
-            // Send the byte[] message through the appropriate client
-
+            // Read in returned handshake message
+            clients.get(i).readMessage();
           }
-          // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
-          else if (inMessage != null) {
-            // TODO: {Yu-Peng} - old MessageHandler functions
-            // ActualMessage receivedMessage = new ActualMessage()
-            // Make a new ActualMessage to put in function
-            // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is
-            ActualMessage actualMsg = new ActualMessage();
-            byte[] msgLenRaw = Arrays.copyOfRange(inMessage, 0, 4);
-            byte typeRaw = inMessage[4];
-            byte[] msgPayloadRaw = Arrays.copyOfRange(inMessage, 5, inMessage.length);
-
-            int msgLen = Utils.convertByteArrayToInt(msgLenRaw);
-            actualMsg.setMessageLength(msgLen);
-            actualMsg.setPayload(msgPayloadRaw);
-
-            switch(typeRaw) {
-
-                case (byte) 0:
-                    actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
-                    break;
-                case (byte) 1:
-                    actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
-                    break;
-                case (byte) 2:
-                    actualMsg.setMessageType(ActualMessage.MessageType.INTERESTED);
-                    break;
-                case (byte) 3:
-                    actualMsg.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
-                    break;
-                case (byte) 4:
-                    actualMsg.setMessageType(ActualMessage.MessageType.HAVE);
-                    break;
-                case (byte) 5:
-                    actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
-                    break;
-                case (byte) 6:
-                    actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
-                    break;
-                case (byte) 7:
-                    actualMsg.setMessageType(ActualMessage.MessageType.PIECE);
-                    break;
-                default:
-                    System.out.println("Wrong type");
-            }
-
-            // TODO: have ActualMessage object - Reference new MessageHandler {Donald}
-            // Create Peer object (or have a vector of them already setup? not sure)
-            // Call the correct function based on message type
-            // Modify the Peer object to get passed the Logger object so it can do data logging stuff
-            // Modify Peer class to get passed the Vector of clients
+          catch (Exception e) {
+            System.out.print("Error sending handshake to peer " + clients.get(i).getServerID());
+            e.printStackTrace();
+            System.out.println(e);
           }
 
+        }
+
+        // Listen for new handshakes and perform operations
+        while(!finishedListening) {
+          // Receive next data from peers
+          listenServer.keepListening(clients);
+          // If message is a handshake, return a handshake and add the peer to the connected clients list
+        //   String inMessageString = new String(inMessage, StandardCharsets.UTF_8);
+        //   if (inMessageString.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
+        //     // Get ID of peer that sent the handshake
+        //     int handshakePeerID = Integer.parseInt(inMessageString.substring(inMessageString.length() - 4));
+        //     // Find position of peer in vectors
+        //     int location = -1;
+        //     for (int i = 0; i < clients.size(); i++) {
+        //       if (clients.get(i).getServerID() == handshakePeerID) {
+        //         location = i;
+        //       }
+        //     }
+        //     // Check that peerID is valid from the configuration file
+        //     if (location == -1) {
+        //       // TODO: error message or exception or something, not super important but should probably do it if we have time
+        //     }
+        //     else {
+        //       try {
+        //         thisLog.logTcpConnection(clients.get(location).getServerID(), "from");
+        //       }
+        //       catch (Exception e) {
+        //         System.out.print("Error receiving handshake from peer " + clients.get(location).getServerID());
+        //         e.printStackTrace();
+        //         System.out.println(e);
+        //       }
+        //
+        //       // Check if handshake message has already been sent to and received by the peer that initiated this handShakeMsg
+        //       // If handshake has not been made the other way, send a message back to complete the handshake
+        //       if (connectedClients[location] != true) {
+        //         try {
+        //           clients.get(location).connect();
+        //           thisLog.logTcpConnection(clients.get(location).getServerID(), "to");
+        //         }
+        //         catch (Exception e) {
+        //           System.out.print("Error sending handshake to peer " + clients.get(location).getServerID());
+        //           e.printStackTrace();
+        //           System.out.println(e);
+        //         }
+        //       }
+        //
+        //       // Mark the peer as connected
+        //       connectedClients[location] = true;
+        //     }
+        //
+        //     // TODO: - Reference new MessageHandler {Donald}
+        //     // Send BITFIELD
+        //     // Make ActualMessage object with information
+        //     // Call ActualMessage.createMessage() to generate the byte[] message
+        //     // Send the byte[] message through the appropriate client
+        //
+        //   }
+        //   // If message is not a handshake (and not an empty response from the while loop waiting for a client connection), handle based on ActualMessage type
+        //   else if (inMessage.length != 0) {
+        //     // TODO: {Yu-Peng} - old MessageHandler functions
+        //     // ActualMessage receivedMessage = new ActualMessage()
+        //     // Make a new ActualMessage to put in function
+        //     // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is        //
+        //     // TODO: have ActualMessage object - Reference new MessageHandler {Donald}
+        //     // Create Peer object (or have a vector of them already setup? not sure)
+        //     // Call the correct function based on message type
+        //     // Modify the Peer object to get passed the Logger object so it can do data logging stuff
+        //     // Modify Peer class to get passed the Vector of clients
+        //   }
+        //
         }
       }
       else {
