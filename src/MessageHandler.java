@@ -301,37 +301,28 @@ public class MessageHandler {
 		byte[] payload = msg.toByteArray();
 		ActualMessage pieceMsg = new ActualMessage(ActualMessage.MessageType.PIECE, payload);
 		// byte[] pieceMsg = pieceMsgCreator.createMessage();
-		//TODO: send [pieceMsg] to peer[id] using the client
 		client.sendMessage(pieceMsg);
 	}
 
 	public void sendInterestedMsg(Client client) {
-		ActualMessage actualMessage = new ActualMessage();
-		actualMessage.setMessageType(ActualMessage.MessageType.INTERESTED);
-		actualMessage.setMessageLength(actualMessage.getMessageLength());
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.INTERESTED, null);		
 		client.sendMessage(actualMessage);
 	}
 
 	public void sendNotInterestedMsg(Client client) {
-		ActualMessage actualMessage = new ActualMessage();
-		actualMessage.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
-		actualMessage.setMessageLength(actualMessage.getMessageLength());
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.NOT_INTERESTED, null);
 		client.sendMessage(actualMessage);
 	}
 
 	public static void sendHaveMsg(Client client,int index) {
-		ActualMessage actualMessage = new ActualMessage();
-		actualMessage.setMessageType(ActualMessage.MessageType.HAVE);
-		actualMessage.setPayload(Utils.convertIntToByteArray(index));
-		actualMessage.setMessageLength(actualMessage.getMessageLength());
+		byte[] payload = Utils.convertIntToByteArray(index);
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.HAVE, payload);
 		client.sendMessage(actualMessage);
 	}
 
 	public void sendBitfieldMsg(Client client) {
-		ActualMessage actualMessage = new ActualMessage();
-		actualMessage.setMessageType(ActualMessage.MessageType.BITFIELD);
-		actualMessage.setPayload(Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex));
-		actualMessage.setMessageLength(actualMessage.getMessageLength());
+		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
 	}
 
@@ -348,8 +339,6 @@ public class MessageHandler {
 	}
 
 	public void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{
-
-		//TODO:logger
 		logger.logTitForTat(client.serverID, "unchoke");
 		this.sendRequestMsg(m,client);
 	}
@@ -370,16 +359,12 @@ public class MessageHandler {
 			}
 		}
 		Collections.shuffle(requiredPieces);
-		ActualMessage actualMessage = new ActualMessage();
-		actualMessage.setPayload(Utils.convertIntToByteArray(requiredPieces.get(0)));
-		actualMessage.setMessageType(ActualMessage.MessageType.REQUEST);
-		actualMessage.setMessageLength(actualMessage.getMessageLength());
-
-
+		byte[] payload = Utils.convertIntToByteArray(requiredPieces.get(0));
+		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.REQUEST, payload);
+		client.sendMessage(actualMessage);
 	}
 
 	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
-		//TODO:log{Yu-peng}
 		logger.logTitForTat(client.serverID, "choke");
 		return;
 	}
