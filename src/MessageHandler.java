@@ -39,7 +39,7 @@ public class MessageHandler {
 
 					ArrayList<RemotePeerInfo> downloadingRateList = new ArrayList<>();
 					// waiting for peer process add the global var IDIndex
-					if (peerProcess.peerInfoVector.get(peerProcess.indexID).hascompletefile()) {
+					if (!peerProcess.peerInfoVector.get(peerProcess.indexID).hascompletefile()) {
 
 						// add all the interested peers to the rate list
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
@@ -146,6 +146,7 @@ public class MessageHandler {
 						optimisticUnchokeNeighbor = peerProcess.peerInfoVector.get(chockedPeerList.get(index))
 								.getPeerID();
 						// TODO:sendmessage
+						peerProcess.peerInfoVector.get(chockedPeerList.get(index)).choke=false;
 						Client client = clientMap.get(peerProcess.peerInfoVector.get(chockedPeerList.get(index)).getPeerID());
 						ActualMessage actualMessage = new ActualMessage();
 						actualMessage.setMessageType(ActualMessage.MessageType.UNCHOKE);
