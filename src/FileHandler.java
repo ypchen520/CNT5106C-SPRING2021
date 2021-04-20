@@ -13,7 +13,7 @@ public class FileHandler {
     private String fileName;
     private int fileSize;
     private int pieceSize;
-    private int maxPieces;
+    private static int maxPieces;
     private byte[][] thisData;
     private int hasOriginalFile;
     private String subDirName;
@@ -49,7 +49,7 @@ public class FileHandler {
         // return numPieces;
     }
 
-    public int getMaxPieces(){
+    public static int getMaxPieces(){
         return maxPieces;
     }
 

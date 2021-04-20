@@ -155,7 +155,7 @@ public class peerProcess{
             //}
             //System.out.println("tokens end ----");
         }
-        maxPieces=(int) Math.ceil((fileSize * 1.0f/pieceSize));
+        maxPieces=FileHandler.getMaxPieces();
         peerProcess.comUtil = new CommonUtil(numNeighbors, unchockingInterval, optUnchockingInterval, fileName, fileSize, pieceSize);
         in.close();
       }
