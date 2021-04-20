@@ -246,6 +246,7 @@ public class MessageHandler {
 		// i don't have fileIndex piece && i'm not interested in you now
 		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(client.serverID)) {
 			// TODO send intersted message to id
+			sendInterestedMsg(client);
 		}
 
 		try {
@@ -305,14 +306,14 @@ public class MessageHandler {
 		client.sendMessage(pieceMsg);
 	}
 
-	public void sendInterestedMsg(Client client) {
+	public static void sendInterestedMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.INTERESTED);
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
 		client.sendMessage(actualMessage);
 	}
 
-	public void sendNotInterestedMsg(Client client) {
+	public static void sendNotInterestedMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
@@ -327,7 +328,7 @@ public class MessageHandler {
 		client.sendMessage(actualMessage);
 	}
 
-	public void sendBitfieldMsg(Client client) {
+	public static void sendBitfieldMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage();
 		actualMessage.setMessageType(ActualMessage.MessageType.BITFIELD);
 		actualMessage.setPayload(Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex));
@@ -335,7 +336,7 @@ public class MessageHandler {
 		client.sendMessage(actualMessage);
 	}
 
-	public void receiveBitfieldMsg(ActualMessage m,Client client) {
+	public static void receiveBitfieldMsg(ActualMessage m,Client client) {
 		byte[] bytes = m.getPayload();
 		Set<Integer> convertSet = new HashSet<>();
 		convertSet = Utils.convertByteArrToPieceSet(bytes);
@@ -347,14 +348,14 @@ public class MessageHandler {
 		}
 	}
 
-	public void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{
+	public static void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{
 
 		//TODO:logger
 		logger.logTitForTat(client.serverID, "unchoke");
-		this.sendRequestMsg(m,client);
+		sendRequestMsg(m,client);
 	}
 
-	private void sendRequestMsg(ActualMessage m, Client client) {
+	private static void sendRequestMsg(ActualMessage m, Client client) {
 		//TODO:log{Yu-peng}
 		//no need to log
 		RemotePeerInfo clientPeer = new RemotePeerInfo();
@@ -374,11 +375,11 @@ public class MessageHandler {
 		actualMessage.setPayload(Utils.convertIntToByteArray(requiredPieces.get(0)));
 		actualMessage.setMessageType(ActualMessage.MessageType.REQUEST);
 		actualMessage.setMessageLength(actualMessage.getMessageLength());
-
+		client.sendMessage(actualMessage);
 
 	}
 
-	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
+	public static void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
 		//TODO:log{Yu-peng}
 		logger.logTitForTat(client.serverID, "choke");
 		return;
