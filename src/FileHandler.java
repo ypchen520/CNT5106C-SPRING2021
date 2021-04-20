@@ -1,7 +1,11 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class FileHandler {
 
@@ -10,20 +14,26 @@ public class FileHandler {
     private int fileSize;
     private int pieceSize;
     private int maxPieces;
+    private byte[][] thisData;
+    private int hasOriginalFile;
+    private String subDirName;
 
 
-    public FileHandler(int peerID, String fileName, int fileSize, int pieceSize){
+    public FileHandler(int peerID, String fileName, int fileSize, int pieceSize, int hasFile){
         this.peerID = peerID;
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.pieceSize = pieceSize;
+        this.hasOriginalFile = hasFile;
+        this.subDirName = "peer_" + String.valueOf(peerID);
+        if(hasFile == 0) createSubDirectory();
         getNumPieces();
+        divideIntoPieces();
     }
 
     private void createSubDirectory(){
         try{
-            String dirName = "peer_" + String.valueOf(peerID);
-            File dir = new File(dirName);
+            File dir = new File(subDirName);
             if(!dir.exists()){
                 dir.mkdir();
             }
@@ -33,33 +43,52 @@ public class FileHandler {
         }
     }
 
-    private int getNumPieces(){
-        int numPieces = 0;
+    private void getNumPieces(){
+        // int numPieces = 0;
         this.maxPieces = (int)Math.ceil(fileSize/pieceSize);
-        return numPieces;
+        // return numPieces;
+    }
+
+    public void divideIntoPieces(){
+        // TODO
+        thisData = new byte[maxPieces][];
+        // return 
+    }
+
+    public void readFromFile(){
+        try{
+            // String dirName = "peer_" + String.valueOf(peerID);
+            String filePath = subDirName+fileName;
+            File f = new File(filePath);
+            if(!f.exists() && hasOriginalFile == 1){
+                byte[] data = Files.readAllBytes(Paths.get(filePath));
+                for(int i = 0; i < maxPieces; i++){
+                    if(i != maxPieces-1){
+                        thisData[i] = Arrays.copyOfRange(data, pieceSize*i, pieceSize*(i+1));
+                    }
+                    else{
+                        thisData[i] = Arrays.copyOfRange(data, pieceSize*i, maxPieces);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            System.out.println("[FileHandler] " + e);
+        }
+    }
+
+    public void downloadPiece(byte[] piece, int pieceIndex){
+        thisData[pieceIndex] = piece.clone();
     }
     
     public void saveToSubDirectory(){
-        FileWriter fileWriter = new FileWriter(fileName, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        PrintWriter printWriter = new PrintWriter(bufferedWriter);
-        for(String s : log){
-            // System.out.println(s);
-            printWriter.println(s);
+        try {
+            FileOutputStream stream = new FileOutputStream(subDirName+fileName, true);
+            for(int i = 0; i < maxPieces; i++){
+                stream.write(thisData[i]);
+            }
+            stream.close();
         }
-        printWriter.close();
-    }
-
-    public String getFilePath(){
-        String piecePath = "";
-        // TODO
-        return piecePath;
-    }
-
-    public int divideIntoPieces(){
-        // TODO
-
-        return 
     }
 
 }
