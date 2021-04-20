@@ -249,12 +249,12 @@ public class MessageHandler {
 		}
 
 		try {
-		peerProcess.checkFinish(logger);
+			peerProcess.checkFinish(logger);
 		}
 		catch (Exception e) {
-		System.out.print("Error checking if finished.");
-		e.printStackTrace();
-		System.out.println(e);
+			System.out.print("Error checking if finished.");
+			e.printStackTrace();
+			System.out.println(e);
 		}
 
 	}
