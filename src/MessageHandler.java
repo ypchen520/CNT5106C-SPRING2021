@@ -1,180 +1,243 @@
-// TODO: Move this functionality to peerProcess.java {Yu-Peng}
+// TODO: rename to MessageHandler (filename, classname, and constructor) {Futing}
 
-//package src;
+// TODO: Implement Bitfield, Request, and Piece
+
+// TODO: sender functions
+
+// TODO: pass in Vector<client>
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-
-import ActualMessage.MessageType;
+import java.nio.charset.StandardCharsets;
+import java.io.*;
+import java.util.*;
 
 public class MessageHandler {
+	private static int peerID;
+    private static CommonUtil comUtil;
+	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
+    private Logger logger;
 
-    //TODO test this module
-    //judge if the message is handshake message
+	public MessageHandler(CommonUtil comUtil, int peerID) {
+		MessageHandler.comUtil = comUtil;
+        MessageHandler.peerID = peerID;
+        this.logger = new Logger(peerID);
+	}
 
-    // Define message types
-    // public static final byte TYPE_CHOKE = 0;
-    // public static final byte TYPE_UNCHOKE = 1;
-    // public static final byte TYPE_INTERESTED = 2;
-    // public static final byte TYPE_NOT_INTERESTED = 3;
-    // public static final byte TYPE_HAVE = 4;
-    // public static final byte TYPE_BITFIELD = 5;
-    // public static final byte TYPE_REQUEST = 6;
-    // public static final byte TYPE_PIECE = 7;
+	// An arraylist stores the preferred neighbors
+	public static ArrayList<Integer> preferredNeighborList = new ArrayList<Integer>();
+	public static int optimisticUnchokeNeighbor = -1;
 
+	public static class UnchokedPeers extends TimerTask {
+		@Override
+		public void run() {
+			synchronized (preferredNeighborList) {
+				try {
+					// reset the neighbors
+					preferredNeighborList.clear();
 
-    public void onReceiveMessage(byte[] msg, ActualMessage actualMsg) {
-        byte[] msgLenRaw = Arrays.copyOfRange(msg, 0, 4);
-        byte typeRaw = msg[4];
-        byte[] msgPayloadRaw = Arrays.copyOfRange(msg, 5, msg.length);
+					ArrayList<RemotePeerInfo> downloadingRateList = new ArrayList<>();
+					// waiting for peer process add the global var IDIndex
+					if (peerProcess.peerInfoVector.get(peerProcess.indexID).hascompletefile()) {
 
-        int msgLen = convertByteArrayToInt(msgLenRaw);
-        actualMsg.setMessageLength(msgLen);
-        actualMsg.setPayload(msgPayloadRaw);
+						// add all the interested peers to the rate list
+						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
+							downloadingRateList.add(tempPeer);
+						}
 
-        switch(typeRaw) {
+						// sort the downloadingRateList according to the downloading rate from high to
+						// low
+						downloadingRateList.sort(new Comparator<RemotePeerInfo>() {
+							@Override
+							public int compare(RemotePeerInfo remotePeerInfo, RemotePeerInfo t1) {
+								return t1.downloadingRatePiece - remotePeerInfo.downloadingRatePiece;
+							}
+						});
 
-            case (byte) 0:
-                actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
-                break;
-            case (byte) 1:
-                actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
-                break;
-            case (byte) 2:
-                actualMsg.setMessageType(ActualMessage.MessageType.INTERESTED);
-                break;
-            case (byte) 3:
-                actualMsg.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
-                break;
-            case (byte) 4:
-                actualMsg.setMessageType(ActualMessage.MessageType.HAVE);
-                break;
-            case (byte) 5:
-                actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
-                break;
-            case (byte) 6:
-                actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
-                break;
-            case (byte) 7:
-                actualMsg.setMessageType(ActualMessage.MessageType.PIECE);
-                break;
-            default:
-                System.out.println("Wrong type");
-        }
+						for (RemotePeerInfo tempPeer : downloadingRateList) {
+							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
+								preferredNeighborList.add(tempPeer.getPeerID());
+							}
+						}
+
+						// reset the downloading rate to 0;
+						// request peerProcess add getPeerInfoVector
+						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+							tempPeer.resetDownloadingRatePiece();
+						}
+
+					} else {
+						// get interested Peers from peerprocess it change when get bitfield and
+						// have messages;
+						ArrayList<RemotePeerInfo> interestedPeers = peerProcess.getInterestedPeers();
+						Collections.shuffle(interestedPeers);
+						for (RemotePeerInfo tempPeer : interestedPeers) {
+							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
+								preferredNeighborList.add(tempPeer.getPeerID());
+							}
+						}
+					}
+
+					// logger change prefer neighbors
+					// TODO change the data stucture
+					ArrayList<RemotePeerInfo> logPreferredNeighborList = new ArrayList<>();
+					// Logger.logPreferredNeighborsChange(preferredNeighborList);
+
+					for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+						// if prefer and choke, send unchoke
+						if (preferredNeighborList.contains(tempPeer.getPeerID()) && tempPeer.choke) {
+							// TODO send unchoke message
+							tempPeer.choke = false;
+						} else if (!preferredNeighborList.contains(tempPeer.getPeerID()) && !tempPeer.choke
+								&& optimisticUnchokeNeighbor != tempPeer.getPeerID()) {
+							// if not prefer, not choke, not opt, send choke
+							// TODO send choke message
+							tempPeer.choke = true;
+						}
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+		}
+	}
+
+	public static class OptUnchokedPeers extends TimerTask {
+		@Override
+		public void run() {
+			synchronized (preferredNeighborList) {
+				try {
+
+					ArrayList<Integer> chockedPeerList = new ArrayList<>();
+					Set<Integer> interestedSet = new HashSet<>();
+					for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
+						interestedSet.add(tempPeer.getPeerID());
+					}
+					for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+
+						if (interestedSet.contains(tempPeer.getPeerID()) && tempPeer.choke) {
+							chockedPeerList.add(tempPeer.index);
+						}
+					}
+
+					if (!chockedPeerList.isEmpty()) {
+						int index = (int) (Math.random() * chockedPeerList.size());
+						optimisticUnchokeNeighbor = peerProcess.peerInfoVector.get(chockedPeerList.get(index))
+								.getPeerID();
+						// TODO:sendmessage
+
+						// LOGGER
+						new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID())
+								.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+		}
+
+	}
+
+	public void startUnchoking() {
+		Timer timer = new Timer();
+		int unchockingInterval = comUtil.getUnchockingInterval() * 1000;
+		timer.scheduleAtFixedRate(new UnchokedPeers(), 0, unchockingInterval);
+	}
+
+	public void startOptUnchoking() {
+		Timer timer = new Timer();
+		int optUnchockingInterval = comUtil.getOptUnchockingInterval() * 1000;
+		timer.scheduleAtFixedRate(new OptUnchokedPeers(), 0, optUnchockingInterval);
+	}
+
+	// receive Msg from Id
+	public static void receiveInterestedMsg(ActualMessage m, int id) {
+		try {
+			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(id,
+					"interested");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Set<Integer> interestedSet = new HashSet<>();
+		ArrayList<RemotePeerInfo> interestedPeers = peerProcess.getInterestedPeers();
+		for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
+			interestedSet.add(tempPeer.getPeerID());
+		}
+
+		if (!interestedSet.contains(id)) {
+			RemotePeerInfo containedPeer = new RemotePeerInfo();
+			for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+				if (tempPeer.getPeerID() == id) {
+					containedPeer = tempPeer;
+					break;
+				}
+			}
+			interestedPeers.add(containedPeer);
+		}
+	}
+
+	public static void receiveNotInterestedMsg(ActualMessage m, int id) {
+		try {
+			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(id,
+					"not interested");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Set<Integer> interestedSet = new HashSet<>();
+		ArrayList<RemotePeerInfo> interestedPeers = peerProcess.getInterestedPeers();
+		for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
+			interestedSet.add(tempPeer.getPeerID());
+		}
+		RemotePeerInfo containedPeer = new RemotePeerInfo();
+		for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+			if (tempPeer.getPeerID() == id) {
+				containedPeer = tempPeer;
+				break;
+			}
+		}
+		interestedPeers.remove(containedPeer);
+
+	}
+
+	public static void receiveHaveMsg(ActualMessage m, int id) {
+		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
+		try {
+			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(id,"have");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		RemotePeerInfo containedPeer = new RemotePeerInfo();
+		for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+			if (tempPeer.getPeerID() == id) {
+				containedPeer = tempPeer;
+				break;
+			}
+		}
+
+		containedPeer.pieceIndex.add(fileIndex);
+
+		RemotePeerInfo remotePeerInfo = peerProcess.peerInfoVector.get(peerProcess.indexID);
+		// i don't have fileIndex piece && i'm not interested in you now
+		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(id)) {
+			// TODO send intersted message to id
+		}
+
+		peerProcess.checkFinish();
+	}
+
+    public void receiveRequestMsg(ActualMessage m, int id){
+		//no need to log
+        //logger.logReceivingMessages(id,"receive");
+        String pieceIndex = new String(m.getPayload(), StandardCharsets.UTF_8);
+        //if unchoked:
+        //sendPieceMsg(pieceIndex);
     }
 
-    // public void onReceivePayload(ActualMessage actualMessage) {
-    //     switch(actualMessage.getMessageType()) {
+	private static void sendUnchokeMsg() {
+		// TODO
+		return;
+	}
 
-    //         case TYPE_CHOKE:
-    //             CHOKEReceived();
-    //             break;
-    //         case TYPE_UNCHOKE:
-    //             UNCHOKEReceived();
-    //             break;
-    //         case TYPE_INTERESTED:
-    //             INTERESTEDReceived();
-    //             break;
-    //         case TYPE_NOT_INTERESTED:
-    //             NOTINTERESTEDReceived();
-    //             break;
-    //         case TYPE_HAVE:
-    //             HAVEReceived(actualMessage.getPayload());
-    //             break;
-    //         case TYPE_BITFIELD:
-    //             BITFIELDReceived(actualMessage.getPayload());
-    //             break;
-    //         case TYPE_REQUEST:
-    //             REQUESTReceived(actualMessage.getPayload());
-    //             break;
-    //         case TYPE_PIECE:
-    //             PIECEReceived(actualMessage.getPayload());
-    //             break;
-    //         default:
-    //             System.out.println("Wrong type");
-    //     }
-    // }
-
-    public String getHandshakeHeader(){
-        return "P2PFILESHARINGPROJ";
-    }
-
-    public String getZeroBits(){
-        return "0000000000";
-    }
-
-    public int getPeerId(byte[] bytes){
-        return ByteBuffer.wrap(bytes).getInt();
-    }
-
-    public int getMessageLength(byte[] bytes){
-        return ByteBuffer.wrap(bytes).getInt();
-    }
-
-    public int getMessageType(byte[] bytes){
-        return ByteBuffer.wrap(bytes).getInt();
-    }
-
-    public byte[] getMessagePayload(byte[] bytes){
-        return bytes;
-    }
-
-    public void CHOKEReceived()
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void UNCHOKEReceived()
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void BITFIELDReceived(byte[] payload)
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void INTERESTEDReceived()
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void NOTINTERESTEDReceived()
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void HAVEReceived(byte[] payload)
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void REQUESTReceived(byte[] payload)
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    public void PIECEReceived(byte[] payload)
-    {
-        //TODO:need to be implement
-        return;
-    }
-
-    private static int convertByteArrayToInt(byte[] data) {
-        if (data == null || data.length != 4) return 0x0;
-        // ----------
-        return (int)( // NOTE: type cast not necessary for int
-                (0xff & data[0]) << 24  |
-                (0xff & data[1]) << 16  |
-                (0xff & data[2]) << 8   |
-                (0xff & data[3]) << 0
-        );
-    }
 }
