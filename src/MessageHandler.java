@@ -248,14 +248,14 @@ public class MessageHandler {
 			// TODO send intersted message to id
 		}
 
-    try {
-      peerProcess.checkFinish(logger);
-    }
-    catch (Exception e) {
-      System.out.print("Error checking if finished.");
-      e.printStackTrace();
-      System.out.println(e);
-    }
+		try {
+			peerProcess.checkFinish(logger);
+		}
+		catch (Exception e) {
+			System.out.print("Error checking if finished.");
+			e.printStackTrace();
+			System.out.println(e);
+		}
 
 	}
 
