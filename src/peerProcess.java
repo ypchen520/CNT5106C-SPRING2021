@@ -1,6 +1,6 @@
-// TODO: setup directory structure and
+// TODO: setup directory structure and {Yu-Peng}
 
-// TODO: swap Strings to Byte[] for Client/Server objects
+// TODO: swap Strings to Byte[] for Client/Server objects {Donald}
 
 // package src;
 
@@ -16,7 +16,6 @@ import java.util.*;
 import java.net.Socket;
 import java.net.*;
 
-// TODO: Add logging
 public class peerProcess{
 
 	public static int indexID;
@@ -73,6 +72,7 @@ public class peerProcess{
       int i1;
       try {
         // Read in configuration file
+        // Final TODO: make sure this one is uncommented and the other is commented before submitting
         // BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 
         // Alternative configuration file for local testing, leave one of them commented out
@@ -117,7 +117,6 @@ public class peerProcess{
         thisLog = new Logger(peerID);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
-        // TODO: Check for duplicate IDs in the config file?
         int selfPos = -1;
         int pos = 0;
 
@@ -254,7 +253,7 @@ public class peerProcess{
               connectedClients[location] = true;
             }
 
-            // TODO:
+            // TODO: - Reference new MessageHandler {Donald}
             // Send BITFIELD
             // Make ActualMessage object with information
             // Call ActualMessage.createMessage() to generate the byte[] message
@@ -263,12 +262,12 @@ public class peerProcess{
           }
           // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
           else if (inMessage != "N/A") {
-            // TODO:
+            // TODO: {Yu-Peng} - old MessageHandler functions
             // ActualMessage receivedMessage = new ActualMessage()
             // Make a new ActualMessage to put in function
             // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is
 
-            // TODO: have ActualMessage object
+            // TODO: have ActualMessage object - Reference new MessageHandler {Donald}
             // Create Peer object (or have a vector of them already setup? not sure)
             // Call the correct function based on message type
             // Modify the Peer object to get passed the Logger object so it can do data logging stuff
@@ -293,9 +292,9 @@ public class peerProcess{
     			return;
     		}
     	}
-      // TODO: Close clients and server
+      // TODO: Close clients and server {Donald}
 
-      // TODO: Write log to file
+      // TODO: Write log to file {Yu-Peng}
     	System.exit(0);
     }
 }
