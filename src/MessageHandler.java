@@ -45,7 +45,7 @@ public class MessageHandler {
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
 							downloadingRateList.add(tempPeer);
 						}
-
+							
 						// sort the downloadingRateList according to the downloading rate from high to
 						// low
 						downloadingRateList.sort(new Comparator<RemotePeerInfo>() {
@@ -54,15 +54,14 @@ public class MessageHandler {
 								return t1.downloadingRatePiece - remotePeerInfo.downloadingRatePiece;
 							}
 						});
-
+						//TODO
 						for (RemotePeerInfo tempPeer : downloadingRateList) {
 							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
 								preferredNeighborList.add(tempPeer.getPeerID());
 							}
 						}
-
+						
 						// reset the downloading rate to 0;
-						// request peerProcess add getPeerInfoVector
 						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
 							tempPeer.resetDownloadingRatePiece();
 						}
@@ -233,7 +232,7 @@ public class MessageHandler {
 		RemotePeerInfo remotePeerInfo = peerProcess.peerInfoVector.get(peerProcess.indexID);
 		// i don't have fileIndex piece && i'm not interested in you now
 		if (!remotePeerInfo.pieceIndex.contains(fileIndex) && !peerProcess.getInterestedPeers().contains(client.serverID)) {
-			// TODO send intersted message to id
+		
 			sendInterestedMsg(client);
 		}
 
@@ -282,6 +281,7 @@ public class MessageHandler {
 		if(!pieces.contains(pieceIndex)){
 			pieces.add(pieceIndex);
 		}
+		peerProcess.peerInfoVector.get(peerProcess.indexID).downloadingRatePiece++;
 		logger.logDownloadingPiece(client.serverID, pieceIndex, pieces.size());
 		fileHandler.downloadPiece(piece, pieceIndex);
 
@@ -361,6 +361,7 @@ public class MessageHandler {
 			clientPeer.requested = true;
 		}
 	}
+
 
 	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
 		logger.logTitForTat(client.serverID, "choke");
