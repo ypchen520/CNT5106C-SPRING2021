@@ -324,7 +324,7 @@ public class peerProcess{
         return interestedPeers;
     }
 
-    public static void checkFinish() {
+    public static void checkFinish(Logger logger) throws IOException{
     	for(RemotePeerInfo remotePeerInfo:peerProcess.peerInfoVector){
     		if(remotePeerInfo.pieceIndex.size()<peerProcess.maxPieces) {
     			return;
@@ -333,6 +333,7 @@ public class peerProcess{
       // TODO: Close clients and server {Donald}
 
       // TODO: Write log to file {Yu-Peng}
+      logger.writeToFile();
     	System.exit(0);
     }
 

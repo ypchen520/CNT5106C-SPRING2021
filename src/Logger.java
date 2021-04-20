@@ -34,7 +34,7 @@ public class Logger {
         System.out.println(content);
     }
 
-    private void writeToFile() throws IOException{
+    public void writeToFile() throws IOException{
         String filename = filePrefix + peerID + fileExtenstion;
         FileWriter fileWriter = new FileWriter(filename, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
