@@ -79,7 +79,6 @@ public class MessageHandler {
 						}
 					}
 
-					//TODO logger change prefer neighbors
 					// ArrayList<RemotePeerInfo> logPreferredNeighborList = new ArrayList<>();
 					logger.logPreferredNeighborsChange(preferredNeighborList);
 
@@ -91,21 +90,14 @@ public class MessageHandler {
 						// if prefer and choke, send unchoke
 						if (preferredNeighborList.contains(tempPeer.getPeerID()) && tempPeer.choke) {
 							Client client = clientMap.get(tempPeer.getPeerID());
-							ActualMessage actualMessage = new ActualMessage();
-							actualMessage.setMessageType(ActualMessage.MessageType.UNCHOKE);
-							actualMessage.setMessageLength(actualMessage.getMessageLength());
-							// TODO send unchoke message
+							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.UNCHOKE, null);
 							client.sendMessage(actualMessage);
 							tempPeer.choke = false;
 						} else if (!preferredNeighborList.contains(tempPeer.getPeerID()) && !tempPeer.choke
 								&& optimisticUnchokeNeighbor != tempPeer.getPeerID()) {
 							// if not prefer, not choke, not opt, send choke
-							// TODO send choke message
 							Client client = clientMap.get(tempPeer.getPeerID());
-							ActualMessage actualMessage = new ActualMessage();
-							actualMessage.setMessageType(ActualMessage.MessageType.CHOKE);
-							actualMessage.setMessageLength(actualMessage.getMessageLength());
-							// TODO send unchoke message
+							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.CHOKE, null);
 							client.sendMessage(actualMessage);
 
 							tempPeer.choke = true;
@@ -145,15 +137,10 @@ public class MessageHandler {
 						int index = (int) (Math.random() * chockedPeerList.size());
 						optimisticUnchokeNeighbor = peerProcess.peerInfoVector.get(chockedPeerList.get(index))
 								.getPeerID();
-						// TODO:sendmessage
 						peerProcess.peerInfoVector.get(chockedPeerList.get(index)).choke=false;
 						Client client = clientMap.get(peerProcess.peerInfoVector.get(chockedPeerList.get(index)).getPeerID());
-						ActualMessage actualMessage = new ActualMessage();
-						actualMessage.setMessageType(ActualMessage.MessageType.UNCHOKE);
-						actualMessage.setMessageLength(actualMessage.getMessageLength());
-						// TODO send unchoke message
+						ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.UNCHOKE, null);
 						client.sendMessage(actualMessage);
-						// LOGGER
 						logger.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
 					}
 
