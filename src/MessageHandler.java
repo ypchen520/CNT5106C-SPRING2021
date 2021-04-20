@@ -80,8 +80,8 @@ public class MessageHandler {
 					}
 
 					//TODO logger change prefer neighbors
-					ArrayList<RemotePeerInfo> logPreferredNeighborList = new ArrayList<>();
-					// Logger.logPreferredNeighborsChange(preferredNeighborList);
+					// ArrayList<RemotePeerInfo> logPreferredNeighborList = new ArrayList<>();
+					logger.logPreferredNeighborsChange(preferredNeighborList);
 
 					Map<Integer, Client> clientMap = new HashMap<>();
 					for(Client client:peerProcess.clients) {
@@ -154,8 +154,7 @@ public class MessageHandler {
 						// TODO send unchoke message
 						client.sendMessage(actualMessage);
 						// LOGGER
-						new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID())
-								.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
+						logger.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
 					}
 
 				} catch (Exception e) {
@@ -181,8 +180,7 @@ public class MessageHandler {
 	// receive Msg from Id
 	public static void receiveInterestedMsg(ActualMessage m, Client client) {
 		try {
-			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(client.serverID,
-					"interested");
+			logger.logReceivingMessages(client.serverID, "interested");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -204,13 +202,9 @@ public class MessageHandler {
 		}
 	}
 
-
-
-
 	public static void receiveNotInterestedMsg(ActualMessage m, Client client) {
 		try {
-			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(client.serverID,
-					"not interested");
+			logger.logReceivingMessages(client.serverID, "not interested");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -230,14 +224,10 @@ public class MessageHandler {
 
 	}
 
-
-
-
-
 	public static void receiveHaveMsg(ActualMessage m, Client client) {
 		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
 		try {
-			new Logger(peerProcess.peerInfoVector.get(peerProcess.indexID).getPeerID()).logReceivingMessages(client.serverID,"have");
+			logger.logReceivingMessages(client.serverID,"have");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -345,37 +335,40 @@ public class MessageHandler {
 		}
 	}
 
-	public void receiveUnchokeMsg(ActualMessage m,Client client) {
+	public void receiveUnchokeMsg(ActualMessage m,Client client) throws IOException{
 
 		//TODO:logger
+		logger.logTitForTat(client.serverID, "unchoke");
 		this.sendRequestMsg(m,client);
 	}
 
 	private void sendRequestMsg(ActualMessage m, Client client) {
 		//TODO:log{Yu-peng}
-				RemotePeerInfo clientPeer = new RemotePeerInfo();
-				for(RemotePeerInfo p:peerProcess.peerInfoVector) {
-					if(p.getPeerID()==client.serverID) {
-						clientPeer = p;
-					}
-				}
-				ArrayList<Integer> requiredPieces = new ArrayList<>();
-				for(int i = 0;i<peerProcess.maxPieces-1;i++) {
-					if(!peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex.contains(i)&&clientPeer.pieceIndex.contains(i)&&!peerProcess.requestedPieces.contains(i)) {
-						requiredPieces.add(i);
-					}
-				}
-				Collections.shuffle(requiredPieces);
-				ActualMessage actualMessage = new ActualMessage();
-				actualMessage.setPayload(Utils.convertIntToByteArray(requiredPieces.get(0)));
-				actualMessage.setMessageType(ActualMessage.MessageType.REQUEST);
-				actualMessage.setMessageLength(actualMessage.getMessageLength());
+		//no need to log
+		RemotePeerInfo clientPeer = new RemotePeerInfo();
+		for(RemotePeerInfo p:peerProcess.peerInfoVector) {
+			if(p.getPeerID()==client.serverID) {
+				clientPeer = p;
+			}
+		}
+		ArrayList<Integer> requiredPieces = new ArrayList<>();
+		for(int i = 0;i<peerProcess.maxPieces-1;i++) {
+			if(!peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex.contains(i)&&clientPeer.pieceIndex.contains(i)&&!peerProcess.requestedPieces.contains(i)) {
+				requiredPieces.add(i);
+			}
+		}
+		Collections.shuffle(requiredPieces);
+		ActualMessage actualMessage = new ActualMessage();
+		actualMessage.setPayload(Utils.convertIntToByteArray(requiredPieces.get(0)));
+		actualMessage.setMessageType(ActualMessage.MessageType.REQUEST);
+		actualMessage.setMessageLength(actualMessage.getMessageLength());
 
 
 	}
 
-	public void receiveChokeMsg(ActualMessage m,Client client) {
+	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {
 		//TODO:log{Yu-peng}
+		logger.logTitForTat(client.serverID, "choke");
 		return;
 	}
 

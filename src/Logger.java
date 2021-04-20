@@ -59,11 +59,12 @@ public class Logger {
         }
     }
 
-    public void logPreferredNeighborsChange(List<RemotePeerInfo> preferredNeighbors) throws IOException{
+    public void logPreferredNeighborsChange(ArrayList<Integer> preferredNeighbors) throws IOException{
         String preferredNeighborIDs = "";
         int n = preferredNeighbors.size();
         for(int i = 0; i < n; i++){
-            preferredNeighborIDs += String.valueOf(preferredNeighbors.get(i).getPeerID());
+            // preferredNeighborIDs += String.valueOf(preferredNeighbors.get(i).getPeerID());
+            preferredNeighborIDs += String.valueOf(preferredNeighbors.get(i));
             if(i != n-1)
                 preferredNeighborIDs += ", ";
         }
@@ -105,9 +106,7 @@ public class Logger {
         writeToLog(formatDate(new Date()) + "Peer " + peerID + " has downloaded the complete file.");
     }
 
-    public static void logOptimisticallyUnchokedNeighborChange(int peerID2) throws IOException{
-        writeToLog(formatDate(new Date()) + "Peer " + peerID + " has the optimistically unchoked neighbor "+peerID2+".");
+    public void logOptimisticallyUnchokedNeighborChange(int peerID2) throws IOException{
+        writeToLog(formatDate(new Date()) + "Peer " + peerID + " has the optimistically unchoked neighbor " + peerID2 + ".");
     }
-
-
 }
