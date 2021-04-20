@@ -26,12 +26,10 @@ public class Peers {
 
 					ArrayList<RemotePeerInfo> downloadingRateList = new ArrayList<>();
 					// waiting for peer process add the global var IDIndex
-					if (peerProcess.peerInfoVector.get(peerProcess.indexID).completeFile) {
+					if (peerProcess.peerInfoVector.get(peerProcess.indexID).hascompletefile()) {
 
 						// add all the interested peers to the rate list
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
-							// peerId_ChunkCounts.add(new PeerId_ChunkCount(peerId,
-							// PeerProcess.peers.get(PeerProcess.getIndex(peerId)).getChunkCount()));
 							downloadingRateList.add(tempPeer);
 						}
 
@@ -57,7 +55,7 @@ public class Peers {
 						}
 
 					} else {
-						// TODO:get interested Peers from peerprocess it change when get bitfield and
+						// get interested Peers from peerprocess it change when get bitfield and
 						// have messages;
 						ArrayList<RemotePeerInfo> interestedPeers = peerProcess.getInterestedPeers();
 						Collections.shuffle(interestedPeers);
@@ -81,7 +79,6 @@ public class Peers {
 						} else if (!preferredNeighborList.contains(tempPeer.getPeerID()) && !tempPeer.choke
 								&& optimisticUnchokeNeighbor != tempPeer.getPeerID()) {
 							// if not prefer, not choke, not opt, send choke
-							// PeerProcess.write("Choking peer " + p.peerId);
 							// TODO send choke message
 							tempPeer.choke = true;
 						}

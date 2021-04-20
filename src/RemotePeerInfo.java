@@ -19,6 +19,7 @@ public class RemotePeerInfo {
     private String hostName;
     private int listeningPort;
     private int hasFileOrNot;
+    //didn't use actually
     public boolean completeFile;
     public int downloadingRatePiece;
     public boolean choke;
@@ -72,5 +73,13 @@ public class RemotePeerInfo {
 
     public void resetDownlowdingRatePiece(){
         this.downloadingRatePiece=0;
+    }
+    
+    public boolean hascompletefile() {
+    	if(peerProcess.peerInfoVector.get(this.index).pieceIndex.size()<peerProcess.maxPieces) {
+    		return false;
+    	}
+
+    	return true;
     }
 }
