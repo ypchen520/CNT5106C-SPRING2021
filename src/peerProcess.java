@@ -266,6 +266,44 @@ public class peerProcess{
             // ActualMessage receivedMessage = new ActualMessage()
             // Make a new ActualMessage to put in function
             // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is
+            ActualMessage actualMsg = new ActualMessage();
+            byte[] msgLenRaw = Arrays.copyOfRange(inMessage, 0, 4);
+            byte typeRaw = inMessage[4];
+            byte[] msgPayloadRaw = Arrays.copyOfRange(inMessage, 5, inMessage.length);
+
+            int msgLen = convertByteArrayToInt(msgLenRaw);
+            actualMsg.setMessageLength(msgLen);
+            actualMsg.setPayload(msgPayloadRaw);
+
+            switch(typeRaw) {
+
+                case (byte) 0:
+                    actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
+                    break;
+                case (byte) 1:
+                    actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
+                    break;
+                case (byte) 2:
+                    actualMsg.setMessageType(ActualMessage.MessageType.INTERESTED);
+                    break;
+                case (byte) 3:
+                    actualMsg.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
+                    break;
+                case (byte) 4:
+                    actualMsg.setMessageType(ActualMessage.MessageType.HAVE);
+                    break;
+                case (byte) 5:
+                    actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
+                    break;
+                case (byte) 6:
+                    actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
+                    break;
+                case (byte) 7:
+                    actualMsg.setMessageType(ActualMessage.MessageType.PIECE);
+                    break;
+                default:
+                    System.out.println("Wrong type");
+            }
 
             // TODO: have ActualMessage object - Reference new MessageHandler {Donald}
             // Create Peer object (or have a vector of them already setup? not sure)
@@ -296,5 +334,16 @@ public class peerProcess{
 
       // TODO: Write log to file {Yu-Peng}
     	System.exit(0);
+    }
+
+    private static int convertByteArrayToInt(byte[] data) {
+      if (data == null || data.length != 4) return 0x0;
+      // ----------
+      return (int)( // NOTE: type cast not necessary for int
+              (0xff & data[0]) << 24  |
+              (0xff & data[1]) << 16  |
+              (0xff & data[2]) << 8   |
+              (0xff & data[3]) << 0
+      );
     }
 }
