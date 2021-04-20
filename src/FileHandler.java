@@ -13,7 +13,7 @@ public class FileHandler {
     private String fileName;
     private int fileSize;
     private int pieceSize;
-    private int maxPieces;
+    private static int maxPieces;
     private byte[][] thisData;
     private int hasOriginalFile;
     private String subDirName;
@@ -49,7 +49,7 @@ public class FileHandler {
         // return numPieces;
     }
 
-    public int getMaxPieces(){
+    public static int getMaxPieces(){
         return maxPieces;
     }
 
@@ -86,7 +86,7 @@ public class FileHandler {
     public void downloadPiece(byte[] piece, int pieceIndex){
         thisData[pieceIndex] = piece.clone();
     }
-    
+
     public void saveToSubDirectory(){
         try {
             FileOutputStream stream = new FileOutputStream(subDirName+fileName, true);
