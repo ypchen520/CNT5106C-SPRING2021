@@ -347,16 +347,19 @@ public class MessageHandler {
 				clientPeer = p;
 			}
 		}
-		ArrayList<Integer> requiredPieces = new ArrayList<>();
-		for(int i = 0;i<peerProcess.maxPieces;i++) {
-			if(!peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex.contains(i)&&clientPeer.pieceIndex.contains(i)&&!peerProcess.requestedPieces.contains(i)) {
-				requiredPieces.add(i);
+		if(!clientPeer.requested){
+			ArrayList<Integer> requiredPieces = new ArrayList<>();
+			for(int i = 0;i<peerProcess.maxPieces;i++) {
+				if(!peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex.contains(i)&&clientPeer.pieceIndex.contains(i)) {
+					requiredPieces.add(i);
+				}
 			}
+			Collections.shuffle(requiredPieces);
+			byte[] payload = Utils.convertIntToByteArray(requiredPieces.get(0));
+			ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.REQUEST, payload);
+			client.sendMessage(actualMessage);
+			clientPeer.requested = true;
 		}
-		Collections.shuffle(requiredPieces);
-		byte[] payload = Utils.convertIntToByteArray(requiredPieces.get(0));
-		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.REQUEST, payload);
-		client.sendMessage(actualMessage);
 	}
 
 	public void receiveChokeMsg(ActualMessage m,Client client) throws IOException {

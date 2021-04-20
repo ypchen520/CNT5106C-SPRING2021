@@ -25,6 +25,7 @@ public class RemotePeerInfo {
     public boolean choke;
     public int index;
     public Set<Integer> pieceIndex;
+    public boolean requested;
 
     public RemotePeerInfo() {
 
@@ -37,6 +38,7 @@ public class RemotePeerInfo {
         this.listeningPort = port;
         this.hasFileOrNot = hasFileOrNot;
         pieceIndex = new HashSet<>();
+        this.requested = false;
     }
 
     public int getPeerID() {
