@@ -151,8 +151,16 @@ public class Client {
   }
 
   public void sendMessage(ActualMessage msg) {
-    this.setMessage(msg.createMessage());
-    transmit();
+    try {
+      this.setMessage(msg.createMessage());
+      transmit();
+    }
+    catch (Exception e) {
+      System.out.print("Error transmitting");
+      e.printStackTrace();
+      System.out.println(e);
+    }
+
   }
 
   void closeSocket() {
