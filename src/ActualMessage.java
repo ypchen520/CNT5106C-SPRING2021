@@ -41,6 +41,9 @@ public class ActualMessage {
     // public static final byte TYPE_BITFIELD = 5;
     // public static final byte TYPE_REQUEST = 6;
     // public static final byte TYPE_PIECE = 7;
+    
+    public ActualMessage() {
+    }
 
     public ActualMessage(MessageType type, byte[] payload) {
         // this.messageLength=length;
