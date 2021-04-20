@@ -286,7 +286,7 @@ public class peerProcess{
           String inMessageString = new String(inMessage, StandardCharsets.UTF_8);
           if (inMessageString.substring(0, 28).equals("P2PFILESHARINGPROJ0000000000")) {
             // Get ID of peer that sent the handshake
-            int handshakePeerID = Integer.parseInt(inMessage.substring(inMessage.length - 4));
+            int handshakePeerID = Integer.parseInt(inMessage.substring(inMessage.length() - 4));
             // Find position of peer in vectors
             int location = -1;
             for (int i = 0; i < clients.size(); i++) {
