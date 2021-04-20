@@ -3,8 +3,6 @@
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import ActualMessage.MessageType;
-
 public class MessageHandler {
 
     //TODO test this module
