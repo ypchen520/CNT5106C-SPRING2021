@@ -33,7 +33,7 @@ public class Utils {
     	StringBuilder stringBuilder = new StringBuilder();
     	for(int i = 0; i < bytes.length; i++) {
     		stringBuilder.append(bytes[i]);
-    		if(i%8==7) {
+    		if(i%7==6) {
     			resArr.add(Byte.valueOf(stringBuilder.toString(),2));
     			stringBuilder.setLength(0);
     		}
@@ -55,9 +55,6 @@ public class Utils {
     	StringBuilder stringBuilder = new StringBuilder();
     	for (int i=0;i<payload.length;i++) {
     		String temp = Integer.toBinaryString(Integer.parseInt(Byte.toString(payload[i])));
-    		for(int j = 0;j<8-temp.length();i++) {
-    			stringBuilder.append("0");
-    		}
     		stringBuilder.append(temp);
     	}
     	Set<Integer> resSet = new HashSet<>();
