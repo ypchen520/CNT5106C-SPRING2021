@@ -292,12 +292,12 @@ public class MessageHandler {
 		client.sendMessage(pieceMsg);
 	}
 
-	public void sendInterestedMsg(Client client) {
+	public static void sendInterestedMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.INTERESTED, null);		
 		client.sendMessage(actualMessage);
 	}
 
-	public void sendNotInterestedMsg(Client client) {
+	public static void sendNotInterestedMsg(Client client) {
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.NOT_INTERESTED, null);
 		client.sendMessage(actualMessage);
 	}
@@ -308,7 +308,7 @@ public class MessageHandler {
 		client.sendMessage(actualMessage);
 	}
 
-	public void sendBitfieldMsg(Client client) {
+	public static void sendBitfieldMsg(Client client) {
 		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
