@@ -212,14 +212,15 @@ public class MessageHandler {
 	}
 
 	public static void receiveHaveMsg(ActualMessage m, Client client) {
-		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
+		// int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
+		int fileIndex = Utils.convertByteArrayToInt(m.getPayload());
 		try {
 			logger.logReceivingMessages(client.serverID,"have");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		RemotePeerInfo containedPeer = new RemotePeerInfo();
+		RemotePeerInfo containedPeer = new RemotePeerInfo(); //YP
 		for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
 			if (tempPeer.getPeerID() == client.serverID) {
 				containedPeer = tempPeer;
@@ -251,19 +252,24 @@ public class MessageHandler {
     public static void receiveRequestMsg(ActualMessage m, Client client){
 		//no need to log
         //logger.logReceivingMessages(id,"receive");
-        int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
-        // DONALD: I'm adding these so the program will compile, I don't know about their usage so I'm guessing this is just not fully finished yet
-        // TODO
-		byte[] piece = null;
-        //if unchoked:
-        try {
-          sendPieceMsg(pieceIndex, piece, client);
-        }
-        catch (Exception e) {
-          System.out.print("Error sending piece.");
-          e.printStackTrace();
-          System.out.println(e);
-        }
+		boolean unchoke = false;
+        for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+			if(tempPeer.getPeerID() == client.serverID){
+				unchoke = !tempPeer.choke;
+			}
+		}
+		if(unchoke){
+			int pieceIndex = Utils.convertByteArrayToInt(m.getPayload());
+			byte[] piece = fileHandler.getData(pieceIndex);
+			try {
+				sendPieceMsg(pieceIndex, piece, client);
+			}
+			catch (Exception e) {
+				System.out.print("Error sending piece.");
+				e.printStackTrace();
+				System.out.println(e);
+			}
+		}
 
     }
 
@@ -278,6 +284,7 @@ public class MessageHandler {
 		}
 		logger.logDownloadingPiece(client.serverID, pieceIndex, pieces.size());
 		fileHandler.downloadPiece(piece, pieceIndex);
+
 		//send have message?
 		sendHaveMsg(client, pieceIndex);
 	}
@@ -341,7 +348,7 @@ public class MessageHandler {
 			}
 		}
 		ArrayList<Integer> requiredPieces = new ArrayList<>();
-		for(int i = 0;i<peerProcess.maxPieces-1;i++) {
+		for(int i = 0;i<peerProcess.maxPieces;i++) {
 			if(!peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex.contains(i)&&clientPeer.pieceIndex.contains(i)&&!peerProcess.requestedPieces.contains(i)) {
 				requiredPieces.add(i);
 			}

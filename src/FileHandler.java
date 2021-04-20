@@ -53,6 +53,10 @@ public class FileHandler {
         return maxPieces;
     }
 
+    public byte[] getData(int index){
+        return thisData[index];
+    }
+
     public void divideIntoPieces(){
         thisData = new byte[maxPieces][];
     }
