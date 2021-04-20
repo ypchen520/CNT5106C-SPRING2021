@@ -1,3 +1,5 @@
+// TODO: swap Strings to Byte[] {Donald}
+
 import java.net.*;
 import java.io.*;
 import java.nio.*;
@@ -75,7 +77,6 @@ public class Client {
       String returnedMessage;
 
       if (serverName.equals("localhost")) {
-        System.out.println("Connecting to localhost with port " + serverPort);
         clientSocket = new Socket(InetAddress.getByName(null), serverPort);
       }
       else {
@@ -92,8 +93,6 @@ public class Client {
       String messageString = new String(message, StandardCharsets.UTF_8);
 
       outStream.writeBytes(messageString + '\n');
-
-      System.out.println("Client " + peerID + " attempting to connect to " + serverID + " with message " + message);
 
       returnedMessage = inStream.readLine();
 

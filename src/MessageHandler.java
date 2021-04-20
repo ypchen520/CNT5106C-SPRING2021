@@ -1,3 +1,5 @@
+// TODO: Move this functionality to peerProcess.java {Yu-Peng}
+
 //package src;
 
 import java.nio.ByteBuffer;
@@ -164,7 +166,7 @@ public class MessageHandler {
         //TODO:need to be implement
         return;
     }
-    
+
     private static int convertByteArrayToInt(byte[] data) {
         if (data == null || data.length != 4) return 0x0;
         // ----------

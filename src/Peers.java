@@ -1,15 +1,28 @@
+// TODO: rename to MessageHandler (filename, classname, and constructor) {Futing}
+
+// TODO: Implement Bitfield, Request, and Piece
+
+// TODO: sender functions
+
+// TODO: pass in Vector<client>
+
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.rmi.Remote;
 import java.io.*;
 import java.util.*;
 
 public class Peers {
-	private static CommonUtil comUtil;
+	private static int peerID;
+    private static CommonUtil comUtil;
 	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
+    private Logger logger;
 
-	public Peers(CommonUtil comUtil) {
+	public Peers(CommonUtil comUtil, int peerID) {
 		Peers.comUtil = comUtil;
+        Peers.peerID = peerID;
+        this.logger = new Logger(peerID);
 	}
 
 	// An arraylist stores the preferred neighbors
@@ -51,7 +64,7 @@ public class Peers {
 						// reset the downloading rate to 0;
 						// request peerProcess add getPeerInfoVector
 						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
-							tempPeer.resetDownlowdingRatePiece();
+							tempPeer.resetDownloadingRatePiece();
 						}
 
 					} else {
@@ -188,7 +201,7 @@ public class Peers {
 		interestedPeers.remove(containedPeer);
 
 	}
-	
+
 	public static void receiveHaveMsg(ActualMessage m, int id) {
 		int fileIndex = ByteBuffer.wrap(m.getPayload()).getInt();
 		try {
@@ -216,8 +229,12 @@ public class Peers {
 		peerProcess.checkFinish();
 	}
 
-    public static void receiveRequestMsg(ActualMessage m, ){
-
+    public void receiveRequestMsg(ActualMessage m, int id){
+		//no need to log
+        //logger.logReceivingMessages(id,"receive");
+        String pieceIndex = new String(m.getPayload(), StandardCharsets.UTF_8);
+        //if unchoked:
+        //sendPieceMsg(pieceIndex);
     }
 
 	private static void sendUnchokeMsg() {

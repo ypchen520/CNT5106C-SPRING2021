@@ -1,3 +1,7 @@
+// TODO: setup directory structure and {Yu-Peng}
+
+// TODO: swap Strings to Byte[] for Client/Server objects {Donald}
+
 // package src;
 
 import java.util.Scanner;
@@ -12,7 +16,6 @@ import java.util.*;
 import java.net.Socket;
 import java.net.*;
 
-// TODO: Add logging
 public class peerProcess{
 
 	public static int indexID;
@@ -22,6 +25,7 @@ public class peerProcess{
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
+    static Vector<Peers> thisPeers = new Vector<Peers>();
 
 
     public static ArrayList<RemotePeerInfo> interestedPeers = new ArrayList<>();
@@ -68,10 +72,11 @@ public class peerProcess{
       int i1;
       try {
         // Read in configuration file
-        BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
+        // Final TODO: make sure this one is uncommented and the other is commented before submitting
+        // BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 
         // Alternative configuration file for local testing, leave one of them commented out
-        // BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
+        BufferedReader in = new BufferedReader(new FileReader("PeerInfoLocal.cfg"));
 
         while((st = in.readLine()) != null) {
 
@@ -112,7 +117,6 @@ public class peerProcess{
         thisLog = new Logger(peerID);
 
         // Find position of the peerID from the command line arguments in peerInfoVector
-        // TODO: Check for duplicat IDs in the config file?
         int selfPos = -1;
         int pos = 0;
 
@@ -122,8 +126,7 @@ public class peerProcess{
           }
           pos++;
         }
-        System.out.print("Self listening port: " + peerInfoVector.elementAt(selfPos).getListeningPort());
-        System.out.print("\n");
+        System.out.println("Self listening port: " + peerInfoVector.elementAt(selfPos).getListeningPort());
 
         //If not in CFG output an error
         if (selfPos == -1) {
@@ -183,10 +186,6 @@ public class peerProcess{
         boolean initialConnect = true;
         while(!finishedListening) {
           // If this is the first iteration of the loop, connect to all previous peers
-          // Testing loop delete later
-          for (int i = 0; i < thisLog.getLog().size(); i++) {
-            System.out.println(thisLog.getLog().get(i));
-          }
 
           if (initialConnect) {
             for (int i = 0; i < selfPos; i++) {
@@ -253,9 +252,28 @@ public class peerProcess{
               // Mark the peer as connected
               connectedClients[location] = true;
             }
+
+            // TODO: - Reference new MessageHandler {Donald}
+            // Send BITFIELD
+            // Make ActualMessage object with information
+            // Call ActualMessage.createMessage() to generate the byte[] message
+            // Send the byte[] message through the appropriate client
+
+          }
+          // If message is not a handshake (and not a N/A response from the while loop waiting for a client connection), handle based on ActualMessage type
+          else if (inMessage != "N/A") {
+            // TODO: {Yu-Peng} - old MessageHandler functions
+            // ActualMessage receivedMessage = new ActualMessage()
+            // Make a new ActualMessage to put in function
+            // Call onReceiveMessage() (or just paste the functionality here) to work out what the message is
+
+            // TODO: have ActualMessage object - Reference new MessageHandler {Donald}
+            // Create Peer object (or have a vector of them already setup? not sure)
+            // Call the correct function based on message type
+            // Modify the Peer object to get passed the Logger object so it can do data logging stuff
+            // Modify Peer class to get passed the Vector of clients
           }
 
-          System.out.println(inMessage.getBytes().length);
         }
       }
       else {
@@ -274,6 +292,9 @@ public class peerProcess{
     			return;
     		}
     	}
+      // TODO: Close clients and server {Donald}
+
+      // TODO: Write log to file {Yu-Peng}
     	System.exit(0);
     }
 }
