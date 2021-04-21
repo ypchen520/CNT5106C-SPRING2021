@@ -106,6 +106,7 @@ public class Client {
 
   // Sends an already generated message from an ActualMessage object
   public void sendMessage(ActualMessage msg) {
+
     try {
       this.setMessage(msg.createMessage());
       clientOut.write(message);
@@ -199,28 +200,40 @@ public class Client {
 
             case (byte) 0:
                 actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
+                thisMsgHandler.receiveChokeMsg(actualMsg, this);
                 break;
             case (byte) 1:
                 actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
+                thisMsgHandler.receiveUnchokeMsg(actualMsg, this);
                 break;
             case (byte) 2:
                 actualMsg.setMessageType(ActualMessage.MessageType.INTERESTED);
+                thisMsgHandler.receiveInterestedMsg(actualMsg, this);
                 break;
             case (byte) 3:
                 actualMsg.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
+                thisMsgHandler.receiveNotInterestedMsg(actualMsg, this);
                 break;
             case (byte) 4:
                 actualMsg.setMessageType(ActualMessage.MessageType.HAVE);
+                thisMsgHandler.receiveHaveMsg(actualMsg, this);
                 break;
             case (byte) 5:
                 actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
                 thisMsgHandler.receiveBitfieldMsg(actualMsg, this);
+                for (int i = 0; i < peerProcess.peerInfoVector.size(); i++) {
+                  System.out.println(peerProcess.peerInfoVector.get(i).pieceIndex);
+                }
+                thisMsgHandler.startUnchoking();
+                thisMsgHandler.startOptUnchoking();
                 break;
             case (byte) 6:
                 actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
+                thisMsgHandler.receiveRequestMsg(actualMsg, this);
                 break;
             case (byte) 7:
                 actualMsg.setMessageType(ActualMessage.MessageType.PIECE);
+                thisMsgHandler.receivePieceMsg(actualMsg, this);
                 break;
             default:
                 System.out.println("Wrong type");

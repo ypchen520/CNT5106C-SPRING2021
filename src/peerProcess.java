@@ -31,6 +31,7 @@ public class peerProcess{
     public static ArrayList<Integer> requestedPieces = new ArrayList<>();
 
     static Vector<Client> clients = new Vector<Client>();
+    static Vector<Client> connectedClientsVector = new Vector<Client>();
     public static int maxPieces;
     public static Object lock = new Object();
     public static CommonUtil comUtil;
@@ -277,6 +278,7 @@ public class peerProcess{
             // Perform the handshake
             clients.get(i).connect(clientSocket);
             connectedClients[i] = true;
+            connectedClientsVector.add(clients.get(i));
 
             // Read in returned handshake message
             clients.get(i).readMessage();

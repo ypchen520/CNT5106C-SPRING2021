@@ -102,6 +102,7 @@ public class Server {
       else {
         // Modify client Socket
         clients.get(serverPos).connect(connectionSocket);
+        peerProcess.connectedClientsVector.add(clients.get(serverPos));
 
         // Log connection from
         log.logTcpConnection(serverID, "from");

@@ -3,8 +3,8 @@ import java.io.ByteArrayOutputStream;
 // package src;
 
 public class ActualMessage {
-    
-    public enum MessageType 
+
+    public enum MessageType
     {
         CHOKE((byte)0),
         UNCHOKE((byte)1),
@@ -14,14 +14,14 @@ public class ActualMessage {
         BITFIELD((byte)5),
         REQUEST((byte)6),
         PIECE((byte)7);
-        
+
         private final byte type;
-        
+
         public byte getType()
         {
             return this.type;
         }
-    
+
         private MessageType(byte type)
         {
             this.type = type;
@@ -32,7 +32,7 @@ public class ActualMessage {
     private MessageType messageType;
     private byte[] messagePayload; // payload given when the object is created.
     private byte[] messageWithoutLen; // message not including the length field
-    
+
     // public static final byte TYPE_CHOKE = 0;
     // public static final byte TYPE_UNCHOKE = 1;
     // public static final byte TYPE_INTERESTED = 2;
@@ -41,7 +41,7 @@ public class ActualMessage {
     // public static final byte TYPE_BITFIELD = 5;
     // public static final byte TYPE_REQUEST = 6;
     // public static final byte TYPE_PIECE = 7;
-    
+
     public ActualMessage() {
     }
 
@@ -77,9 +77,12 @@ public class ActualMessage {
 
     public byte [] createMessage() throws Exception {
         // Piece messages have a payload which consists of a 4-byte piece index field and the content of the piece.
+
         ByteArrayOutputStream msgWithLen = new ByteArrayOutputStream();
         calculateLength();
-        byte[] msgLen = Utils.convertIntToByteArray(this.messageLength);
+        System.out.println("MessageLength = " + this.messageLength);
+        byte[] msgLen = new byte[4];
+        msgLen = Utils.convertIntToByteArray(this.messageLength);
         msgWithLen.write(msgLen);
         msgWithLen.write(messageWithoutLen);
         return msgWithLen.toByteArray();
@@ -103,7 +106,9 @@ public class ActualMessage {
         ByteArrayOutputStream msg = new ByteArrayOutputStream();
         msg.write(messageType.getType());
         // msg.write(payload);
-        msg.write(messagePayload);
+        if (messagePayload != null) {
+          msg.write(messagePayload);
+        }
         this.messageWithoutLen = msg.toByteArray();
         this.messageLength = messageWithoutLen.length;
     }

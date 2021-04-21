@@ -80,23 +80,24 @@ public class MessageHandler {
 
 					// ArrayList<RemotePeerInfo> logPreferredNeighborList = new ArrayList<>();
 					logger.logPreferredNeighborsChange(preferredNeighborList);
+          System.out.println("Unchoking timer");
 
 					Map<Integer, Client> clientMap = new HashMap<>();
-					for(Client client:peerProcess.clients) {
+					for(Client client:peerProcess.connectedClientsVector) {
 						clientMap.put(client.getServerID(), client);
 					}
 					for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
 						// if prefer and choke, send unchoke
 						if (preferredNeighborList.contains(tempPeer.getPeerID()) && tempPeer.choke) {
 							Client client = clientMap.get(tempPeer.getPeerID());
-							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.UNCHOKE, null);
+							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.UNCHOKE, new byte[0]);
 							client.sendMessage(actualMessage);
 							tempPeer.choke = false;
 						} else if (!preferredNeighborList.contains(tempPeer.getPeerID()) && !tempPeer.choke
 								&& optimisticUnchokeNeighbor != tempPeer.getPeerID()) {
 							// if not prefer, not choke, not opt, send choke
 							Client client = clientMap.get(tempPeer.getPeerID());
-							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.CHOKE, null);
+							ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.CHOKE, new byte[0]);
 							client.sendMessage(actualMessage);
 
 							tempPeer.choke = true;
@@ -116,7 +117,7 @@ public class MessageHandler {
 			synchronized (preferredNeighborList) {
 				try {
 					Map<Integer, Client> clientMap = new HashMap<>();
-					for(Client client:peerProcess.clients) {
+					for(Client client:peerProcess.connectedClientsVector) {
 						clientMap.put(client.getServerID(), client);
 					}
 
@@ -142,6 +143,7 @@ public class MessageHandler {
 						client.sendMessage(actualMessage);
 						logger.logOptimisticallyUnchokedNeighborChange(optimisticUnchokeNeighbor);
 					}
+          System.out.println("Opt unchoking timer");
 
 				} catch (Exception e) {
 					System.out.println(e);
@@ -161,6 +163,7 @@ public class MessageHandler {
 		Timer timer = new Timer();
 		int optUnchockingInterval = comUtil.getOptUnchockingInterval() * 1000;
 		timer.scheduleAtFixedRate(new OptUnchokedPeers(), 0, optUnchockingInterval);
+    System.out.println("Opt Unchoking timer");
 	}
 
 	// receive Msg from Id
@@ -324,14 +327,16 @@ public class MessageHandler {
 
 	public static void sendBitfieldMsg(Client client) {
 		byte[] payload = Utils.convertPieceSetToByteArr(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
-    System.out.println("This is " + payload);
+    System.out.println("Piece Index is: ");
+    System.out.println(peerProcess.peerInfoVector.get(peerProcess.indexID).pieceIndex);
 		ActualMessage actualMessage = new ActualMessage(ActualMessage.MessageType.BITFIELD, payload);
 		client.sendMessage(actualMessage);
-    System.out.println("Client ID is " + client.getPeerID());
 	}
 
 	public static void receiveBitfieldMsg(ActualMessage m,Client client) {
 		byte[] bytes = m.getPayload();
+    System.out.println("Payload is: ");
+    System.out.println(Utils.convertByteArrToPieceSet(bytes));
 		Set<Integer> convertSet = new HashSet<>();
 		convertSet = Utils.convertByteArrToPieceSet(bytes);
 		for(RemotePeerInfo p:peerProcess.peerInfoVector) {
