@@ -228,6 +228,7 @@ public class Client {
                 }
                 thisMsgHandler.startUnchoking();
                 thisMsgHandler.startOptUnchoking();
+                // startReading();
                 // this.readMessage();
                 break;
             case (byte) 6:
@@ -266,5 +267,20 @@ public class Client {
       e.printStackTrace();
       System.out.println(e);
     }
+  }
+
+  public class readTimer extends TimerTask {
+    @Override
+    public void run() {
+      //Read in if possible
+      System.out.println("here");
+      readMessage();
+    }
+  }
+
+  public void startReading() {
+    Timer timer = new Timer();
+    int interval = 3000;
+    timer.scheduleAtFixedRate(new readTimer(), 0, interval);
   }
 }

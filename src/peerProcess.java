@@ -89,6 +89,7 @@ public class peerProcess{
            String hostname = tokens[1];
            int port = Integer.parseInt(tokens[2]);
            int hasFile = Integer.parseInt(tokens[3]);
+           System.out.println("has file: " + hasFile);
            // peerProcess.hasOriginalFile = hasFile;
              //System.out.println("tokens begin ----");
              //for (int x=0; x<tokens.length; x++) {
@@ -181,11 +182,7 @@ public class peerProcess{
         getConfiguration();
         getCommon();
         thisLog = new Logger(peerID);
-        thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerInfoVector.get(indexID).getHasFileOrNot());
-        maxPieces = thisFileHandler.getMaxPieces();
-        thisFileHandler.readFromFile();
-        System.out.println("Has file: " + peerInfoVector.get(indexID).getHasFileOrNot());
-        MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler, peerInfoVector.get(indexID));
+
 
 
         // Find position of the peerID from the command line arguments in peerInfoVector
@@ -205,6 +202,14 @@ public class peerProcess{
           }
           pos++;
         }
+
+        thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerInfoVector.get(indexID).getHasFileOrNot());
+        thisFileHandler.readFromFile();
+        System.out.println("Has file: " + peerInfoVector.get(indexID).getHasFileOrNot());
+        System.out.println("Index ID: " + indexID);
+
+        MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler, peerInfoVector.get(indexID));
+
         System.out.println("Self listening port: " + peerInfoVector.elementAt(selfPos).getListeningPort());
 
         //If not in CFG output an error
