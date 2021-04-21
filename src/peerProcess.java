@@ -180,6 +180,7 @@ public class peerProcess{
         getCommon();
         thisLog = new Logger(peerID);
         thisFileHandler = new FileHandler(peerID, comUtil.getFileName(), comUtil.getfileSize(), comUtil.getpieceSize(), peerInfoVector.get(indexID).getHasFileOrNot());
+        maxPieces = thisFileHandler.getMaxPieces();
         thisFileHandler.readFromFile();
         System.out.println("Has file: " + peerInfoVector.get(indexID).getHasFileOrNot());
         MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler);
