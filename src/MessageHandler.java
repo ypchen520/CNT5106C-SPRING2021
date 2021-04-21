@@ -61,6 +61,7 @@ public class MessageHandler {
 						for (RemotePeerInfo tempPeer : downloadingRateList) {
 							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
 								preferredNeighborList.add(tempPeer.getPeerID());
+
 							}
 						}
 
@@ -74,6 +75,7 @@ public class MessageHandler {
 						// have messages;
 						ArrayList<RemotePeerInfo> interestedPeers = peerProcess.getInterestedPeers();
 						Collections.shuffle(interestedPeers);
+						System.out.println("Interested peers here: " + interestedPeers);
 						for (RemotePeerInfo tempPeer : interestedPeers) {
 							if (preferredNeighborList.size() < comUtil.getNumNeighbors()) {
 								preferredNeighborList.add(tempPeer.getPeerID());
@@ -243,7 +245,7 @@ public class MessageHandler {
 		}
 
 		try {
-			peerProcess.checkFinish(logger);
+			peerProcess.checkFinish(logger, fileHandler);
 		}
 		catch (Exception e) {
 			System.out.print("Error checking if finished.");

@@ -203,22 +203,28 @@ public class Client {
                 actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
                 thisMsgHandler.receiveChokeMsg(actualMsg, this);
                 System.out.println("Received choke message");
+                this.readMessage();
                 break;
             case (byte) 1:
                 actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
                 thisMsgHandler.receiveUnchokeMsg(actualMsg, this);
+                this.readMessage();
                 break;
             case (byte) 2:
                 actualMsg.setMessageType(ActualMessage.MessageType.INTERESTED);
+                System.out.println("Recieved interested");
                 thisMsgHandler.receiveInterestedMsg(actualMsg, this);
+                this.readMessage();
                 break;
             case (byte) 3:
                 actualMsg.setMessageType(ActualMessage.MessageType.NOT_INTERESTED);
                 thisMsgHandler.receiveNotInterestedMsg(actualMsg, this);
+                this.readMessage();
                 break;
             case (byte) 4:
                 actualMsg.setMessageType(ActualMessage.MessageType.HAVE);
                 thisMsgHandler.receiveHaveMsg(actualMsg, this);
+                this.readMessage();
                 break;
             case (byte) 5:
                 actualMsg.setMessageType(ActualMessage.MessageType.BITFIELD);
@@ -228,16 +234,19 @@ public class Client {
                 }
                 thisMsgHandler.startUnchoking();
                 thisMsgHandler.startOptUnchoking();
-                // startReading();
+                startReading();
+                this.readMessage();
                 // this.readMessage();
                 break;
             case (byte) 6:
                 actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
                 thisMsgHandler.receiveRequestMsg(actualMsg, this);
+                this.readMessage();
                 break;
             case (byte) 7:
                 actualMsg.setMessageType(ActualMessage.MessageType.PIECE);
                 thisMsgHandler.receivePieceMsg(actualMsg, this);
+                this.readMessage();
                 break;
             default:
                 System.out.println("Wrong type");
@@ -251,9 +260,9 @@ public class Client {
 
     }
     catch (Exception e) {
-      System.out.print("Error listening on port");
-      e.printStackTrace();
-      System.out.println(e);
+      // System.out.print("Error listening on port");
+      // e.printStackTrace();
+      // System.out.println(e);
       fullMessage = new byte[0];
     }
   }
@@ -273,8 +282,13 @@ public class Client {
     @Override
     public void run() {
       //Read in if possible
-      System.out.println("here");
-      readMessage();
+      try {
+        readMessage();
+      }
+      catch (Exception e) {
+        //Do nothing
+      }
+
     }
   }
 

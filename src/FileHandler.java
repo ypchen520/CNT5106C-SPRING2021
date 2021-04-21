@@ -54,6 +54,7 @@ public class FileHandler {
     }
 
     public byte[] getData(int index){
+        System.out.println(thisData[index]);
         return thisData[index];
     }
 
