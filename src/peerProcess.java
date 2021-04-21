@@ -21,6 +21,7 @@ public class peerProcess{
     // getConfiguration method reads in the PeerInfo cfg file.
     // Original code from the StartRemotePeers.java file provided on the course website
     static Vector<RemotePeerInfo> peerInfoVector = new Vector<RemotePeerInfo>();
+    static Vector<RemotePeerInfo> connectedPeerInfoVector = new Vector<RemotePeerInfo>();
     static Vector<Socket> clientSockets = new Vector<Socket>();
     static Vector<DataOutputStream> clientOutstreams = new Vector<DataOutputStream>();
     static Vector<BufferedReader> clientInstreams = new Vector<BufferedReader>();
@@ -184,7 +185,7 @@ public class peerProcess{
         maxPieces = thisFileHandler.getMaxPieces();
         thisFileHandler.readFromFile();
         System.out.println("Has file: " + peerInfoVector.get(indexID).getHasFileOrNot());
-        MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler);
+        MessageHandler thisMsgHandler = new MessageHandler(comUtil, peerID, thisLog, thisFileHandler, peerInfoVector.get(indexID));
 
 
         // Find position of the peerID from the command line arguments in peerInfoVector
@@ -279,6 +280,7 @@ public class peerProcess{
             clients.get(i).connect(clientSocket);
             connectedClients[i] = true;
             connectedClientsVector.add(clients.get(i));
+            connectedPeerInfoVector.add(peerInfoVector.get(i));
 
             // Read in returned handshake message
             clients.get(i).readMessage();

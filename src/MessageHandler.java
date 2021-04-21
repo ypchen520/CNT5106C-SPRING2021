@@ -17,12 +17,14 @@ public class MessageHandler {
 	private static List<RemotePeerInfo> unchokedPeers = new ArrayList<>();
     private static Logger logger;
 	private static FileHandler fileHandler;
+  private static RemotePeerInfo thisRPI;
 
-	public MessageHandler(CommonUtil comUtil, int peerID, Logger logger, FileHandler fh) {
+	public MessageHandler(CommonUtil comUtil, int peerID, Logger logger, FileHandler fh, RemotePeerInfo rpi) {
 		MessageHandler.comUtil = comUtil;
         MessageHandler.peerID = peerID;
         MessageHandler.logger = logger;
 		MessageHandler.fileHandler = fh;
+    MessageHandler.thisRPI = rpi;
 	}
 
 	// An arraylist stores the preferred neighbors
@@ -39,9 +41,10 @@ public class MessageHandler {
 
 					ArrayList<RemotePeerInfo> downloadingRateList = new ArrayList<>();
 					// waiting for peer process add the global var IDIndex
-					if (!peerProcess.peerInfoVector.get(peerProcess.indexID).hascompletefile()) {
+					if (!thisRPI.hascompletefile()) {
 
 						// add all the interested peers to the rate list
+            System.out.println("Interested Peers: " + peerProcess.getInterestedPeers());
 						for (RemotePeerInfo tempPeer : peerProcess.getInterestedPeers()) {
 							downloadingRateList.add(tempPeer);
 						}
@@ -62,7 +65,7 @@ public class MessageHandler {
 						}
 
 						// reset the downloading rate to 0;
-						for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+						for (RemotePeerInfo tempPeer : peerProcess.connectedPeerInfoVector) {
 							tempPeer.resetDownloadingRatePiece();
 						}
 
@@ -86,7 +89,7 @@ public class MessageHandler {
 					for(Client client:peerProcess.connectedClientsVector) {
 						clientMap.put(client.getServerID(), client);
 					}
-					for (RemotePeerInfo tempPeer : peerProcess.peerInfoVector) {
+					for (RemotePeerInfo tempPeer : peerProcess.connectedPeerInfoVector) {
 						// if prefer and choke, send unchoke
 						if (preferredNeighborList.contains(tempPeer.getPeerID()) && tempPeer.choke) {
 							Client client = clientMap.get(tempPeer.getPeerID());

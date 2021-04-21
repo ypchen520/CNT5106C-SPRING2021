@@ -110,6 +110,7 @@ public class Client {
     try {
       this.setMessage(msg.createMessage());
       clientOut.write(message);
+      System.out.println("Sent message of type " + msg.getMessageType());
     }
     catch (Exception e) {
       System.out.print("Error transmitting");
@@ -201,6 +202,7 @@ public class Client {
             case (byte) 0:
                 actualMsg.setMessageType(ActualMessage.MessageType.CHOKE);
                 thisMsgHandler.receiveChokeMsg(actualMsg, this);
+                System.out.println("Received choke message");
                 break;
             case (byte) 1:
                 actualMsg.setMessageType(ActualMessage.MessageType.UNCHOKE);
@@ -226,6 +228,7 @@ public class Client {
                 }
                 thisMsgHandler.startUnchoking();
                 thisMsgHandler.startOptUnchoking();
+                // this.readMessage();
                 break;
             case (byte) 6:
                 actualMsg.setMessageType(ActualMessage.MessageType.REQUEST);
